@@ -6,10 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 import org.apache.commons.collections.buffer.PriorityBuffer;
@@ -34,11 +37,11 @@ import entidades.Tramo;
 
 public class RedDeTransporte             // i.e. un digrafo
 {
-	private Set<Estacion> estaciones;    // Nodos
-	private Set<Tramo> tramos;		     // Aristas
-	private Set<LineaDeTransporte> lineasDeTransporte;
-	private Set<TareaDeMantenimiento> tareasDeMantenimiento;
-	private Set<Boleto> boletos;
+	private TreeSet<Estacion> estaciones;    // Nodos
+	private TreeSet<Tramo> tramos;		     // Aristas
+	private TreeSet<LineaDeTransporte> lineasDeTransporte;
+	private TreeSet<TareaDeMantenimiento> tareasDeMantenimiento;
+	private TreeSet<Boleto> boletos;
 	
 	private EstacionDB estacionDB;
 	private TramoDB tramoDB;
@@ -199,23 +202,25 @@ public class RedDeTransporte             // i.e. un digrafo
 	// -----------------------------------------------------------------------------------------------------------------------------------------------------
 	// Operaciones generales grafos:
 	
-	private List<Estacion> getEstacionesAdyacentes(Estacion estacion)
+	private Set<Estacion> getEstacionesAdyacentes(Estacion estacion)
 	{
-		List<Estacion> estacionesAdyacentes = new ArrayList<Estacion>();
+		Set<Estacion> estacionesAdyacentes = new HashSet<Estacion>();
 		
 		for(Tramo t : tramos)
+		{
 			if 	(
 					t.getIdOrigen().equals(estacion.getId()) && 
 					estacion.estaActiva()					 &&
 					this.tramoEstaEfectivamenteActivo(t)
 				)
-				estacionesAdyacentes.add(this.getEstacion(t.getIdDestino()));
+					estacionesAdyacentes.add(this.getEstacion(t.getIdDestino())); // Si ya esta no se agrega
+		}
 			
 		return estacionesAdyacentes;
 	}
 	private List<Tramo> getTramosEntre(Estacion estacionOrigen, Estacion estacionDestino)
 	{
-		List<Tramo> tramosEntreEstaciones = new ArrayList<Tramo>();
+		List<Tramo> tramosEntreEstaciones = new LinkedList<Tramo>();
 		
 		for (Tramo t : tramos)
 			if	(
@@ -455,7 +460,80 @@ public class RedDeTransporte             // i.e. un digrafo
 	// -----------------------------------------------------------------------------------------------------------------------------------------------------
 	// Page rank: 
 	
+	public Map<Estacion, Double> estacionRank(Double factorDeAmortiguacion, Double error) // i.e. pageRank
+	{
+		Map<Estacion, Double> estacionRank = new LinkedHashMap<Estacion, Double>();
+		Map<Estacion, Double> estacionRankAnterior = new LinkedHashMap<Estacion, Double>();
+		Map<Estacion, Integer> cantidadEnlacesSalientesEstacion = new HashMap<Estacion, Integer>();
+		Double unEstacionRank;
+		
+		for (Estacion e : estaciones)
+		{
+			estacionRank.put(e, 1.0);
+			estacionRankAnterior.put(e, 0.0);
+			cantidadEnlacesSalientesEstacion.put(e, this.getCantidadDeEnlacesSalientes(e));
+		}
+		
+		while(hayErrorEnEstacionRank(estacionRank, estacionRankAnterior, error))
+		{
+			for (Estacion e : estaciones)
+			{
+				estacionRankAnterior.put(e, estacionRank.get(e));
+				
+				unEstacionRank = 0.0;
+				for (Estacion eI : this.getEstacionesIncidentes(e))
+					unEstacionRank += estacionRank.get(eI) / cantidadEnlacesSalientesEstacion.get(eI);
+				
+				unEstacionRank *= factorDeAmortiguacion;
+				unEstacionRank += 1 - factorDeAmortiguacion;
+				
+				estacionRank.put(e, unEstacionRank);
+			}
+		}
+		
+		return estacionRank;
+		// Despues ver: https://www.geeksforgeeks.org/iterate-map-java/
+	}
 	
+	private Set<Estacion> getEstacionesIncidentes(Estacion estacion)
+	{
+		Set<Estacion> estacionesIncidentes = new HashSet<Estacion>();
+		
+		for (Tramo t : tramos)
+			if (t.getIdDestino().equals(estacion.getId()))
+				estacionesIncidentes.add(this.getEstacion(t.getIdDestino()));
+		
+		return estacionesIncidentes;		
+	}
+
+	private Integer getCantidadDeEnlacesSalientes(Estacion estacion) 
+	{
+		Integer suma = 0;
+		for (Tramo t : tramos)
+			if (t.getIdOrigen().equals(estacion.getId()))
+				suma++;
+		
+		if (suma == 0)
+			return 1; 		// Sumamente peligroso que una estacion no tenga tramos
+		else
+			return suma;
+	}
+
+	private Boolean hayErrorEnEstacionRank(Map<Estacion, Double> estacionRank, // No se que tan necesario es hacerlo asi
+			Map<Estacion, Double> estacionRankAnterior, Double error) 
+	{
+		Boolean noHayError = true;
+		Iterator<Estacion> i = estaciones.iterator();
+		Estacion e;
+		
+		while (i.hasNext() && noHayError)
+		{
+			e = i.next();
+			noHayError = Math.abs(estacionRank.get(e) - estacionRankAnterior.get(e)) < error; 
+		}
+		
+		return !noHayError;
+	}
 
 	
 }
