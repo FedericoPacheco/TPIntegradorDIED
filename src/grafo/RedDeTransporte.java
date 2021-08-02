@@ -3,8 +3,10 @@ package grafo;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -381,9 +383,80 @@ public class RedDeTransporte             // i.e. un digrafo
 	}
 	
 	// -----------------------------------------------------------------------------------------------------------------------------------------------------
-	// 
-		
+	// Flujo maximo: 
 	
+	public List<Dupla<LinkedList<Tramo>, Integer>> flujoMaximo(Estacion origen, Estacion destino)
+	{
+		List<Dupla<LinkedList<Tramo>, Integer>> resultado = 
+			new LinkedList<Dupla<LinkedList<Tramo>, Integer>>();
+		
+		LinkedList<Tramo> caminoHastaOrigen = new LinkedList<Tramo>();
+		
+		HashSet<Estacion> estacionesVisitadas = new HashSet<Estacion>();
+		estacionesVisitadas.add(origen);
+		
+		Map<Tramo, Integer> flujoRestanteTramos = new HashMap<Tramo, Integer>();
+		for (Tramo t : tramos)
+			flujoRestanteTramos.put(t, t.getCantidadMaximaPasajeros());
+		
+		this.flujoMaximoAux(origen, destino, caminoHastaOrigen, estacionesVisitadas, flujoRestanteTramos, resultado);
+		return resultado;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void flujoMaximoAux(Estacion origen, Estacion destino, LinkedList<Tramo> caminoHastaOrigen, 
+			HashSet<Estacion> estacionesVisitadas, Map<Tramo, Integer> flujoRestanteTramos, 
+			List<Dupla<LinkedList<Tramo>, Integer>> resultado) 
+	{
+		if (origen.equals(destino))
+		{
+			Integer flujoMaximo = 
+				Collections.min(
+					caminoHastaOrigen, 
+					(t1, t2) -> t1.getCantidadMaximaPasajeros().compareTo(t2.getCantidadMaximaPasajeros())
+				).getCantidadMaximaPasajeros();
+			
+			if (flujoMaximo > 0)
+			{
+				// Restar el "flujo" que ocupa este camino
+				for (Tramo t : caminoHastaOrigen)
+					flujoRestanteTramos.put(t, flujoRestanteTramos.get(t) - flujoMaximo);
+				
+				// Guardar en el resultado
+				resultado.add(new Dupla<LinkedList<Tramo>, Integer>(caminoHastaOrigen, flujoMaximo));
+			}
+		}
+		else
+		{
+			for (Estacion estacionAdyacente : this.getEstacionesAdyacentes(origen))
+			{
+				if (!estacionesVisitadas.contains(estacionAdyacente))
+				{				
+					for (Tramo tramoEstacionAdyacente : this.getTramosEntre(origen, estacionAdyacente))
+					{			
+						if (flujoRestanteTramos.get(tramoEstacionAdyacente) > 0)
+						{
+							LinkedList<Tramo> caminoHastaOrigenCopia = (LinkedList<Tramo>) caminoHastaOrigen.clone();
+							caminoHastaOrigenCopia.add(tramoEstacionAdyacente);
+							
+							HashSet<Estacion> estacionesVisitadasCopia = (HashSet<Estacion>) estacionesVisitadas.clone();
+							estacionesVisitadasCopia.add(estacionAdyacente);
+							
+							this.flujoMaximoAux(
+								estacionAdyacente, destino, caminoHastaOrigenCopia, estacionesVisitadasCopia,
+								flujoRestanteTramos, resultado);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	// -----------------------------------------------------------------------------------------------------------------------------------------------------
+	// Page rank: 
+	
+	
+
 	
 }
 	
