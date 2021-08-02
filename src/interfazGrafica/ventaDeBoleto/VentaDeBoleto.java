@@ -192,7 +192,7 @@ public class VentaDeBoleto extends JPanel
 								e1.printStackTrace();
 							}
 							
-							ventana.setContentPane(new DibujoRedDeTransporte(ventana, this, redDeTransporte, auxDupla.camino));
+							ventana.setContentPane(new DibujoRedDeTransporte(ventana, padre, redDeTransporte, auxDupla.camino));
 					}
 					else
 						JOptionPane.showMessageDialog(ventana, "Lo sentimos. No existen caminos posibles.");
