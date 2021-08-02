@@ -35,6 +35,14 @@ public class Estacion implements Comparable<Estacion>
 		idsMantenimientosRealizados = new ArrayList<Integer>();
 	}
 
+	public Boolean estaActiva()
+	{
+		return 
+			(estado == Estacion.Estado.OPERATIVA) 			&&
+			(LocalTime.now().compareTo(horaApertura) >= 0)	&&
+			(LocalTime.now().compareTo(horaCierre) <= 0);
+	}
+	
 	@Override
 	public String toString()
 	{

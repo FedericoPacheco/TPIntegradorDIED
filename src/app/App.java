@@ -25,16 +25,6 @@ public final class App
 	
 	public static void main (String[] args)
 	{
-		/*
-		Estacion est1 = new Estacion("Estacion A", LocalTime.now(), LocalTime.now().plusHours(7), Estacion.Estado.OPERATIVA);
-		est1.setId(0);
-
-		Estacion est2 = new Estacion("Estacion A", LocalTime.now(), LocalTime.now().plusHours(7), Estacion.Estado.OPERATIVA);
-		est1.setId(0);
-
-		System.out.println(est1.equals(est2));
-		*/
-		
 		//TestDB.testear();
 		
 		try { redDeTransporte = new RedDeTransporte(); } 

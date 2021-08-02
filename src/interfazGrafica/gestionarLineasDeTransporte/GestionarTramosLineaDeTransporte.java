@@ -1,4 +1,4 @@
-package interfazGrafica.lineaDeTransporte;
+package interfazGrafica.gestionarLineasDeTransporte;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -30,7 +30,7 @@ import grafo.RedDeTransporte;
 // https://stackoverflow.com/questions/3179136/jtable-how-to-refresh-table-model-after-insert-delete-or-update-the-data
 
 @SuppressWarnings("serial")
-public class AgregarTramosLineaDeTransporte extends JPanel 
+public class GestionarTramosLineaDeTransporte extends JPanel 
 {
 	private ModeloTablaTramos mtt;
 	private JTable tbl;
@@ -49,12 +49,12 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 	
 	// Valores por defecto para los campos del tramo (Se hizo que en la db no pueda haber nulos)
 	// (DFLT: default)
-	private static final Double DISTANCIA_DFLT = Double.MAX_VALUE;
-	private static final Integer DURACION_DFLT = Integer.MAX_VALUE;
+	private static final Double DISTANCIA_DFLT = (double) (Integer.MAX_VALUE - 1);
+	private static final Integer DURACION_DFLT = Integer.MAX_VALUE - 1;
 	private static final Integer PASAJEROS_DFLT = 0;
-	private static final Double COSTO_DFLT = Double.MAX_VALUE;
+	private static final Double COSTO_DFLT = (double) (Integer.MAX_VALUE - 1);
 	
-	public AgregarTramosLineaDeTransporte(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte) 
+	public GestionarTramosLineaDeTransporte(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte) 
 	{	
 		this.ventana = ventana;
 		this.padre = padre;
@@ -91,7 +91,7 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 		
 		btnAgregar = new JButton("Agregar");
 		btnEliminar = new JButton("Eliminar");
-		btnAceptar = new JButton("Aceptar");
+		btnAceptar = new JButton("Volver");
 		btnCompletarDatos = new JButton("Completar datos");
 		
 		lbl1 = new JLabel("Línea de transporte a completar: ");
@@ -352,7 +352,7 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 		GridBagConstraints gbc;
 		JLabel lbl1, lbl2, lbl3, lbl4, lbl5, lbl6;
 		JTextField txtf1, txtf2, txtf3, txtf4;
-		JButton btn1;
+		JButton btn1, btn2;
 		JComboBox<String> cb4;
 		JPanel padre;
 		
@@ -380,6 +380,7 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 			lbl6 = new JLabel("Costo [$]");
 		
 			btn1 = new JButton("Aceptar");
+			btn2 = new JButton("Volver");
 			
 			txtf1 = new JTextField(
 				tramo.getDistanciaEnKm().equals(DISTANCIA_DFLT)? "" : tramo.getDistanciaEnKm().toString(),
@@ -401,7 +402,13 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 			cb4 = new JComboBox<String>();
 			cb4.addItem("Activo");
 			cb4.addItem("Inactivo");
-			cb4.setSelectedItem((tramo.getEstado() == Tramo.Estado.ACTIVO)? "Activo" : "Inactivo");
+			if(redDeTransporte.getLineaDeTransporte(tramo.getIdLineaDeTransporte()).getEstado() == LineaDeTransporte.Estado.INACTIVA)
+			{
+				cb4.setSelectedItem("Inactivo");
+				cb4.setEnabled(false);
+			}
+			else
+				cb4.setSelectedItem((tramo.getEstado() == Tramo.Estado.ACTIVO)? "Activo" : "Inactivo");
 			
 			gbc.gridx = 0;
 			gbc.gridy = 0;
@@ -495,14 +502,14 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 			gbc.gridy = 6;
 			gbc.gridwidth = 1;
 			gbc.weightx = 0.0;
-			gbc.fill = GridBagConstraints.EAST;
+			gbc.fill = GridBagConstraints.WEST;
 			gbc.ipady = 15;
 			gbc.insets = new Insets(30, 20, 10, 20);
 			this.add(btn1, gbc);
 			btn1.addActionListener(
 				e -> {
 						Tramo.Estado estado;
-						if (((String) cb1.getSelectedItem()).equals("Activo")) 
+						if (((String) cb4.getSelectedItem()).equals("Activo")) 
 							estado = Tramo.Estado.ACTIVO;
 						else	
 							estado = Tramo.Estado.INACTIVO;
@@ -524,6 +531,22 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 						ventana.setVisible(true);
 					 }			
 			);  
+			
+			gbc.gridx = 1;
+			gbc.gridy = 6;
+			gbc.gridwidth = 1;
+			gbc.weightx = 0.0;
+			gbc.fill = GridBagConstraints.EAST;
+			gbc.ipady = 15;
+			gbc.insets = new Insets(30, 20, 10, 20);
+			this.add(btn2, gbc);
+			btn2.addActionListener(
+				e -> {
+						ventana.setContentPane(padre);
+						ventana.pack();
+						ventana.setVisible(true);
+					 }
+			);
 		}
 	}
 	
@@ -545,54 +568,4 @@ public class AgregarTramosLineaDeTransporte extends JPanel
 		    fireTableCellUpdated(row, col);
 		}
 	 }
-	
-	/*
-	class DuplaEstaciones
-	{
-		public Estacion origen;
-		public Estacion destino;
-		
-		public DuplaEstaciones() { } 
-		
-		public DuplaEstaciones(Estacion origen, Estacion destino) 
-		{
-			this.origen = origen;
-			this.destino = destino;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			DuplaEstaciones other = (DuplaEstaciones) obj;
-			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
-				return false;
-			if (destino == null) {
-				if (other.destino != null)
-					return false;
-			} else if (!destino.equals(other.destino))
-				return false;
-			if (origen == null) {
-				if (other.origen != null)
-					return false;
-			} else if (!origen.equals(other.origen))
-				return false;
-			return true;
-		}
-
-		private AgregarTramosLineaDeTransporte getEnclosingInstance() {
-			return AgregarTramosLineaDeTransporte.this;
-		}
-		
-		public String toString()
-		{
-			return this.origen.toString() + " // " + this.destino.toString();
-		}
-
-	}
-	*/
 }

@@ -1,10 +1,11 @@
-package interfazGrafica.lineaDeTransporte;
+package interfazGrafica.gestionarEstaciones;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.SQLException;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,27 +15,28 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import entidades.Estacion;
-import entidades.LineaDeTransporte;
 import grafo.RedDeTransporte;
 
 @SuppressWarnings("serial")
-public class AgregarLineaDeTransporte extends JPanel
+public class AgregarEstacion extends JPanel
 {
 	private GridBagConstraints gbc;
 	private JButton btn1, btn2;
-	private JLabel lbl1, lbl2, lbl3;
-	private JTextField txtf1, txtf2;
+	private JLabel lbl1, lbl2, lbl3, lbl4;
+	private JTextField txtf1, txtf2, txtf3;  // Podria haberse usado JFormattedTextField
 	private JComboBox<String> cb1;
 	private JFrame ventana;
 	private JPanel padre;
 	
 	private RedDeTransporte redDeTransporte;
 	
-	private LineaDeTransporte lineaDeTransporte;
+	private Estacion estacion;
+	private DateTimeFormatter formatoHora;
 	
-	public AgregarLineaDeTransporte(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte)
+	public AgregarEstacion(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte)
 	{
-		lineaDeTransporte = new LineaDeTransporte();
+		estacion = new Estacion();
+		formatoHora = DateTimeFormatter.ofPattern("HH:mm");
 		
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
@@ -50,15 +52,17 @@ public class AgregarLineaDeTransporte extends JPanel
 		btn2 = new JButton("Volver");
 		
 		lbl1 = new JLabel("Nombre"); 
-		lbl2 = new JLabel("Color");
-		lbl3 = new JLabel("Estado");
+		lbl2 = new JLabel("Horario de apertura");
+		lbl3 = new JLabel("Horario de cierre");
+		lbl4 = new JLabel("Estado");
 		
 		txtf1 = new JTextField(25);
 		txtf2 = new JTextField(25);
+		txtf3 = new JTextField(25);
 		
 		cb1 = new JComboBox<String>();
-		cb1.addItem("Activa");
-		cb1.addItem("No Activa");
+		cb1.addItem("Operativa");
+		cb1.addItem("En mantenimiento");
 		
 		
 		gbc.gridx = 0;
@@ -107,10 +111,26 @@ public class AgregarLineaDeTransporte extends JPanel
 		gbc.weightx = 0.75;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(5, 5, 5, 5);
+		this.add(txtf3, gbc);
+		
+		gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.gridwidth = 1;
+		gbc.weightx = 0.25;
+		gbc.fill = GridBagConstraints.NONE;
+		gbc.insets = new Insets(5, 5, 5, 5);
+		this.add(lbl4, gbc);
+		
+		gbc.gridx = 1;
+		gbc.gridy = 3;
+		gbc.gridwidth = 2;
+		gbc.weightx = 0.75;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(5, 5, 5, 5);
 		this.add(cb1, gbc);
 		
 		gbc.gridx = 2;
-		gbc.gridy = 3;
+		gbc.gridy = 4;
 		gbc.gridwidth = 1;
 		gbc.weightx = 0.0;
 		gbc.fill = GridBagConstraints.EAST;
@@ -119,27 +139,29 @@ public class AgregarLineaDeTransporte extends JPanel
 		this.add(btn1, gbc);
 		btn1.addActionListener(
 			e -> {
-					LineaDeTransporte.Estado estado;
-					if (((String) cb1.getSelectedItem()).equals("Activa")) 
-						estado = LineaDeTransporte.Estado.ACTIVA;
+					Estacion.Estado estado;
+					if (((String) cb1.getSelectedItem()).equals("Operativa")) 
+						estado = Estacion.Estado.OPERATIVA;
 					else	
-						estado = LineaDeTransporte.Estado.INACTIVA;
-				
-					agregarLineaDeTransporte
+						estado = Estacion.Estado.EN_MANTENIMIENTO;
+					
+					agregarEstacion
 					(
 						txtf1.getText(),
-						txtf2.getText(),
+						LocalTime.parse(txtf2.getText(), formatoHora),
+						LocalTime.parse(txtf3.getText(), formatoHora),
 						estado
 					);
-					
+				
 					txtf1.setText("");
 					txtf2.setText("");
-					cb1.setSelectedItem("Activa");
-				 }
-			);
+					txtf3.setText("");
+					cb1.setSelectedItem("Operativa");
+				 }			
+		);  
 		
 		gbc.gridx = 1;
-		gbc.gridy = 3;
+		gbc.gridy = 4;
 		gbc.gridwidth = 1;
 		gbc.weightx = 0.0;
 		gbc.fill = GridBagConstraints.WEST;
@@ -152,21 +174,23 @@ public class AgregarLineaDeTransporte extends JPanel
 					ventana.pack();
 					ventana.setVisible(true);
 				 } 
-		);	
+		);
 	}
 	
-	public void agregarLineaDeTransporte(String nombre, String color, LineaDeTransporte.Estado estado)	
+	public void agregarEstacion(String nombre, LocalTime horaApertura, LocalTime horaCierre, Estacion.Estado estado)	
 	{
-		lineaDeTransporte.setNombre(nombre);
-		lineaDeTransporte.setColor(color);
-		lineaDeTransporte.setEstado(estado);
+		estacion.setNombre(nombre);
+		estacion.setHoraApertura(horaApertura);
+		estacion.setHoraCierre(horaCierre);
+		estacion.setEstado(estado);
 		
 		try {
-			redDeTransporte.addLineaDeTransporte(lineaDeTransporte);
-		} catch (SQLException | ClassNotFoundException e) {
+			redDeTransporte.addEstacion(estacion);
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		lineaDeTransporte = new LineaDeTransporte();
+		estacion = new Estacion();
 	}
 }
+

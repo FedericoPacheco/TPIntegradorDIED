@@ -11,8 +11,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import grafo.RedDeTransporte;
-import interfazGrafica.estacion.MenuEstaciones;
-import interfazGrafica.lineaDeTransporte.MenuLineasDeTransporte;
+import interfazGrafica.gestionarEstaciones.MenuEstaciones;
+import interfazGrafica.gestionarLineasDeTransporte.MenuLineasDeTransporte;
+import interfazGrafica.ventaDeBoleto.VentaDeBoleto;
 
 @SuppressWarnings("serial")
 public class MenuPrincipal extends JPanel
@@ -91,6 +92,12 @@ public class MenuPrincipal extends JPanel
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(5, 20, 10, 20);
 		this.add(btn3, gbc);
-		btn3.addActionListener(e -> {}); // Pendiente
+		btn3.addActionListener(
+			e -> {
+					ventana.setContentPane(new VentaDeBoleto(ventana, this, redDeTransporte));
+					ventana.pack();
+					ventana.setVisible(true);
+			 	 }
+		);
 	}
 }

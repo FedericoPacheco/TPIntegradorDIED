@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import entidades.Estacion;
 import entidades.Tramo;
 
-public final class Tripleta implements Comparable<Tripleta>
+public final class TripletaEstacionCostoCamino implements Comparable<TripletaEstacionCostoCamino>
 {
 	// No el mejor disenio orientado a objetos
 	public Estacion estacion;
 	public Double costo;
 	public ArrayList<Tramo> camino;
 
-	public Tripleta(Estacion estacion, Double costo, ArrayList<Tramo> camino) 
+	public TripletaEstacionCostoCamino(Estacion estacion, Double costo, ArrayList<Tramo> camino) 
 	{
 		this.estacion = estacion;
 		this.costo = costo;
@@ -19,7 +19,7 @@ public final class Tripleta implements Comparable<Tripleta>
 	}
 
 	@Override
-	public int compareTo(Tripleta t) 
+	public int compareTo(TripletaEstacionCostoCamino t) 
 	{
 		return costo.compareTo(t.costo);
 	}
