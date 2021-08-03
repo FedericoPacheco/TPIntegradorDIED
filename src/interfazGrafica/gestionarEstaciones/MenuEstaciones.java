@@ -1,53 +1,34 @@
 package interfazGrafica.gestionarEstaciones;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import grafo.RedDeTransporte;
 import interfazGrafica.gestionarEstaciones.informacionAdicional.MenuInformacionAdicionalEstaciones;
+import interfazGrafica.utilidades.MenuGenerico;
 
 @SuppressWarnings("serial")
 public class MenuEstaciones extends JPanel
 {
-	private GridBagConstraints gbc;
-	private JButton btn1, btn2, btn3, btn4, btn5;
 	private JFrame ventana;
-	private JPanel padre;
-	
+	private MenuGenerico menu;
 	private RedDeTransporte redDeTransporte;
 	
-	public MenuEstaciones(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte)
+	public MenuEstaciones(JFrame ventana, JPanel panelPadre, RedDeTransporte redDeTransporte)
 	{
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
-		this.padre = padre;
-		gbc = new GridBagConstraints();
-		this.setLayout(new GridBagLayout());
-		this.armarPanel();
+		menu = new MenuGenerico(ventana, this, panelPadre);
+		
+		this.completarComponentes();
+		menu.armarMenu();
 	}
 	
-	private void armarPanel() 
+	private void completarComponentes() 
 	{
-		btn1 = new JButton("Agregar estación");
-		btn2 = new JButton("Consultar y/o modificar estaciones");
-		btn3 = new JButton("Eliminar estación");
-		btn4 = new JButton("Información adicional de las estaciones");
-		btn5 = new JButton("Volver");
-		
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.ipady = 15;
-		gbc.weightx = 1.0;
-		gbc.weighty = 0.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(10, 20, 5, 20);
-		this.add(btn1, gbc);
-		btn1.addActionListener(
+		JButton btnAgregar = new JButton("Agregar estación");
+		btnAgregar.addActionListener(
 			e -> { 
 					ventana.setContentPane(new AgregarEstacion(ventana, this, redDeTransporte));
 					ventana.pack();
@@ -55,15 +36,9 @@ public class MenuEstaciones extends JPanel
 				 } 
 		);
 		
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.ipady = 15;
-		gbc.weightx = 1.0;
-		gbc.weighty = 0.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 20, 5, 20);
-		this.add(btn2, gbc);
-		btn2.addActionListener(
+		
+		JButton btnConsultarModificar = new JButton("Consultar y/o modificar estaciones");
+		btnConsultarModificar.addActionListener(
 			e -> { 
 					ventana.setContentPane(new ConsultarYModificarEstaciones(ventana, this, redDeTransporte));
 					ventana.pack();
@@ -71,15 +46,8 @@ public class MenuEstaciones extends JPanel
 				 }		
 		); 
 		
-		gbc.gridx = 0;
-		gbc.gridy = 2;
-		gbc.ipady = 15;
-		gbc.weightx = 1.0;
-		gbc.weighty = 0.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 20, 5, 20);
-		this.add(btn3, gbc);
-		btn3.addActionListener(
+		JButton btnEliminar = new JButton("Eliminar estación");
+		btnEliminar.addActionListener(
 			e -> { 
 					ventana.setContentPane(new EliminarEstacion(ventana, this, redDeTransporte));
 					ventana.pack();
@@ -87,15 +55,8 @@ public class MenuEstaciones extends JPanel
 			 	 }
 		);
 		
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		gbc.ipady = 15;
-		gbc.weightx = 1.0;
-		gbc.weighty = 0.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(5, 20, 5, 20);
-		this.add(btn4, gbc);
-		btn4.addActionListener(
+		JButton	btnInfoAdicional = new JButton("Información adicional de las estaciones");
+		btnInfoAdicional.addActionListener(
 			e -> { 
 					ventana.setContentPane(new MenuInformacionAdicionalEstaciones(ventana, this, redDeTransporte));
 					ventana.pack();
@@ -103,21 +64,13 @@ public class MenuEstaciones extends JPanel
 			 	 }
 		);
 		
-		gbc.gridx = 0;
-		gbc.gridy = 4;
-		gbc.ipady = 15;
-		gbc.weightx = 1.0;
-		gbc.weighty = 0.0;
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(30, 20, 10, 20);
-		this.add(btn5, gbc);
-		btn5.addActionListener(
-			e -> {
-					ventana.setContentPane(padre);
-					ventana.pack();
-					ventana.setVisible(true);
-				 } 
-		);
+		
+		menu
+			.addComponente(btnAgregar)
+			.addComponente(btnConsultarModificar)
+			.addComponente(btnEliminar)
+			.addComponente(btnEliminar)
+			.addComponente(btnInfoAdicional);
 	}
 }
 

@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarEstaciones.informacionAdicional;
+package interfazGrafica.utilidades;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 @SuppressWarnings("serial")
-class ModeloTablaSoloLectura extends AbstractTableModel
+public class ModeloTablaSoloLectura extends AbstractTableModel
 {
 	private List<String> nombresColumnas;
 	private Object[][] datos;

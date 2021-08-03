@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import entidades.Estacion;
 import grafo.Dupla;
 import grafo.RedDeTransporte;
+import interfazGrafica.utilidades.ModeloTablaSoloLectura;
 
 @SuppressWarnings("serial")
 public class ProximoMantenimiento extends JPanel 

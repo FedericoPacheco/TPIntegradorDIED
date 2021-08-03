@@ -22,6 +22,7 @@ import entidades.Estacion;
 import entidades.Tramo;
 import grafo.Dupla;
 import grafo.RedDeTransporte;
+import interfazGrafica.utilidades.ModeloTablaSoloLectura;
 
 @SuppressWarnings("serial")
 public class FlujoMaximo extends JPanel 

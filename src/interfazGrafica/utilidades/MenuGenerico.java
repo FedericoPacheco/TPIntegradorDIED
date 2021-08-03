@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarEstaciones.informacionAdicional;
+package interfazGrafica.utilidades;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -39,27 +39,36 @@ public class MenuGenerico extends JPanel
 		gbc.weightx = 1.0;
 		gbc.weighty = 0.0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(10, 20, 0, 20);
+		Insets ins = new Insets(5, 20, 5, 20);
 		int i = 0;
 		for (JComponent c : componentes)
 		{
+			if (i == 0)
+				gbc.insets = new Insets(20, 20, 5, 20);
+			else if ((i == componentes.size() - 1) && (panelPadre == null))
+				gbc.insets = new Insets(5, 20, 20, 20);
+			else 
+				gbc.insets = ins;
+			
 			gbc.gridy = i;
 			panel.add(c, gbc);
 			i++;
 		}
 		
-		
-		JButton btnVolver = new JButton("Volver");
-		btnVolver.addActionListener(
-			e -> {
-					ventana.setContentPane(panelPadre);
-					ventana.pack();
-					ventana.setVisible(true);
-				 }
-		);
-		gbc.gridy = i;
-		gbc.insets = new Insets(35, 20, 10, 20);
-		panel.add(btnVolver, gbc);
+		if (panelPadre != null)
+		{
+			JButton btnVolver = new JButton("Volver");
+			btnVolver.addActionListener(
+				e -> {
+						ventana.setContentPane(panelPadre);
+						ventana.pack();
+						ventana.setVisible(true);
+					 }
+			);
+			gbc.gridy = i;
+			gbc.insets = new Insets(45, 20, 20, 20);
+			panel.add(btnVolver, gbc);
+		}
 	}
 	
 	public MenuGenerico addComponente(JComponent componente) {

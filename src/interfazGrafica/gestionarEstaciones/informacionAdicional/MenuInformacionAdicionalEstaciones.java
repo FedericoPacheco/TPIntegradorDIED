@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import grafo.RedDeTransporte;
+import interfazGrafica.utilidades.MenuGenerico;
 
 @SuppressWarnings("serial")
 public class MenuInformacionAdicionalEstaciones extends JPanel
