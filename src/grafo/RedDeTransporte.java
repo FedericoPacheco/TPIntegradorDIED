@@ -1,6 +1,7 @@
 package grafo;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -535,7 +536,39 @@ public class RedDeTransporte             // i.e. un digrafo
 		return !noHayError;
 	}
 
+	// -----------------------------------------------------------------------------------------------------------------------------------------------------
+	// Proximo manteninimiento:
 	
+	@SuppressWarnings("unchecked")
+	public List<Estacion> proximosMantenimientos()
+	{
+		PriorityBuffer monticuloMantenimientos = 
+			new PriorityBuffer((f1, f2) -> ((LocalDate) f1).compareTo((LocalDate) f2));
+		
+		List<Estacion> ordenMantenimientos = new LinkedList<Estacion>();
+		
+		LocalDate auxFecha;
+		List<Integer> auxMantenimientos;
+		
+		// Especie de heap sort
+		for (Estacion e : estaciones)
+		{
+			auxMantenimientos = e.getIdsMantenimientosRealizados();
+			
+			if (auxMantenimientos.isEmpty())
+				auxFecha = LocalDate.of(1970, 1, 1);
+			else
+				auxFecha = this.getTareaDeMantenimiento(
+					auxMantenimientos.get(auxMantenimientos.size() - 1)).getFechaInicio();
+		
+			monticuloMantenimientos.add(new Dupla<Estacion, LocalDate>(e, auxFecha));
+		}
+		
+		for (Object d : monticuloMantenimientos)
+			ordenMantenimientos.add(((Dupla<Estacion, LocalDate>) d).primero);
+		
+		return ordenMantenimientos;
+	}
 }
 	
 	
