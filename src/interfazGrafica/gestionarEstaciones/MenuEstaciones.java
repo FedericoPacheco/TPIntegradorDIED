@@ -9,12 +9,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import grafo.RedDeTransporte;
+import interfazGrafica.gestionarEstaciones.informacionAdicional.MenuInformacionAdicionalEstaciones;
 
 @SuppressWarnings("serial")
 public class MenuEstaciones extends JPanel
 {
 	private GridBagConstraints gbc;
-	private JButton btn1, btn2, btn3, btn4;
+	private JButton btn1, btn2, btn3, btn4, btn5;
 	private JFrame ventana;
 	private JPanel padre;
 	
@@ -35,7 +36,8 @@ public class MenuEstaciones extends JPanel
 		btn1 = new JButton("Agregar estación");
 		btn2 = new JButton("Consultar y/o modificar estaciones");
 		btn3 = new JButton("Eliminar estación");
-		btn4 = new JButton("Volver");
+		btn4 = new JButton("Información adicional de las estaciones");
+		btn5 = new JButton("Volver");
 		
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -83,7 +85,7 @@ public class MenuEstaciones extends JPanel
 					ventana.pack();
 					ventana.setVisible(true);	
 			 	 }
-		); 
+		);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 3;
@@ -91,9 +93,25 @@ public class MenuEstaciones extends JPanel
 		gbc.weightx = 1.0;
 		gbc.weighty = 0.0;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
-		gbc.insets = new Insets(30, 20, 10, 20);
+		gbc.insets = new Insets(5, 20, 5, 20);
 		this.add(btn4, gbc);
 		btn4.addActionListener(
+			e -> { 
+					ventana.setContentPane(new MenuInformacionAdicionalEstaciones(ventana, this, redDeTransporte));
+					ventana.pack();
+					ventana.setVisible(true);	
+			 	 }
+		);
+		
+		gbc.gridx = 0;
+		gbc.gridy = 4;
+		gbc.ipady = 15;
+		gbc.weightx = 1.0;
+		gbc.weighty = 0.0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+		gbc.insets = new Insets(30, 20, 10, 20);
+		this.add(btn5, gbc);
+		btn5.addActionListener(
 			e -> {
 					ventana.setContentPane(padre);
 					ventana.pack();

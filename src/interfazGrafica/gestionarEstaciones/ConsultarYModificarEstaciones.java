@@ -125,7 +125,8 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 	}
 	
 	@Override
-	public void tableChanged(TableModelEvent e) {
+	public void tableChanged(TableModelEvent e) 
+	{
 		int i = e.getFirstRow();
         int j = e.getColumn();
         Object datoModificado = ((TableModel) e.getSource()).getValueAt(i, j);

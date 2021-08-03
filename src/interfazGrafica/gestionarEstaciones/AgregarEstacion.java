@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import entidades.Estacion;
+import entidades.TareaDeMantenimiento;
 import grafo.RedDeTransporte;
 
 @SuppressWarnings("serial")
@@ -35,7 +37,6 @@ public class AgregarEstacion extends JPanel
 	
 	public AgregarEstacion(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte)
 	{
-		estacion = new Estacion();
 		formatoHora = DateTimeFormatter.ofPattern("HH:mm");
 		
 		this.redDeTransporte = redDeTransporte;
@@ -143,16 +144,35 @@ public class AgregarEstacion extends JPanel
 					if (((String) cb1.getSelectedItem()).equals("Operativa")) 
 						estado = Estacion.Estado.OPERATIVA;
 					else	
-						estado = Estacion.Estado.EN_MANTENIMIENTO;
+						estado = Estacion.Estado.EN_MANTENIMIENTO;						
 					
-					agregarEstacion
-					(
+					estacion = new Estacion(
 						txtf1.getText(),
 						LocalTime.parse(txtf2.getText(), formatoHora),
 						LocalTime.parse(txtf3.getText(), formatoHora),
 						estado
 					);
-				
+					
+					try 
+					{
+						redDeTransporte.addEstacion(estacion);
+						
+						if (estado == Estacion.Estado.EN_MANTENIMIENTO)
+						{
+							TareaDeMantenimiento tarea = new TareaDeMantenimiento(
+								LocalDate.now(), 
+								null, 
+								""  // Ver como hacer esto
+							);
+							
+							redDeTransporte.addTareaDeMantenimiento(tarea, estacion);
+							estacion.addIdMantenimiento(tarea.getId());
+						}
+					} 
+					catch (SQLException | ClassNotFoundException e1) {
+						e1.printStackTrace();
+					}
+						
 					txtf1.setText("");
 					txtf2.setText("");
 					txtf3.setText("");
@@ -174,23 +194,6 @@ public class AgregarEstacion extends JPanel
 					ventana.pack();
 					ventana.setVisible(true);
 				 } 
-		);
-	}
-	
-	public void agregarEstacion(String nombre, LocalTime horaApertura, LocalTime horaCierre, Estacion.Estado estado)	
-	{
-		estacion.setNombre(nombre);
-		estacion.setHoraApertura(horaApertura);
-		estacion.setHoraCierre(horaCierre);
-		estacion.setEstado(estado);
-		
-		try {
-			redDeTransporte.addEstacion(estacion);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		estacion = new Estacion();
+		);	
 	}
 }
-

@@ -416,21 +416,28 @@ public class RedDeTransporte             // i.e. un digrafo
 	{
 		if (origen.equals(destino))
 		{
-			Integer flujoMaximo = 
-				Collections.min(
-					caminoHastaOrigen, 
-					(t1, t2) -> t1.getCantidadMaximaPasajeros().compareTo(t2.getCantidadMaximaPasajeros())
-				).getCantidadMaximaPasajeros();
-			
-			if (flujoMaximo > 0)
+			if (caminoHastaOrigen.isEmpty()) // Se eligio el origen "original" y destino iguales
 			{
-				// Restar el "flujo" que ocupa este camino
-				for (Tramo t : caminoHastaOrigen)
-					flujoRestanteTramos.put(t, flujoRestanteTramos.get(t) - flujoMaximo);
-				
-				// Guardar en el resultado
-				resultado.add(new Dupla<LinkedList<Tramo>, Integer>(caminoHastaOrigen, flujoMaximo));
+				resultado.add(new Dupla<LinkedList<Tramo>, Integer>(new LinkedList<>(), Integer.MAX_VALUE));
 			}
+			else
+			{
+				Integer flujoMaximo = 
+						Collections.min(
+							caminoHastaOrigen, 
+							(t1, t2) -> t1.getCantidadMaximaPasajeros().compareTo(t2.getCantidadMaximaPasajeros())
+						).getCantidadMaximaPasajeros();
+					
+					if (flujoMaximo > 0)
+					{
+						// Restar el "flujo" que ocupa este camino
+						for (Tramo t : caminoHastaOrigen)
+							flujoRestanteTramos.put(t, flujoRestanteTramos.get(t) - flujoMaximo);
+						
+						// Guardar en el resultado
+						resultado.add(new Dupla<LinkedList<Tramo>, Integer>(caminoHastaOrigen, flujoMaximo));
+					}
+			}			
 		}
 		else
 		{
@@ -543,7 +550,8 @@ public class RedDeTransporte             // i.e. un digrafo
 	public List<Estacion> proximosMantenimientos()
 	{
 		PriorityBuffer monticuloMantenimientos = 
-			new PriorityBuffer((f1, f2) -> ((LocalDate) f1).compareTo((LocalDate) f2));
+			new PriorityBuffer(
+				(d1, d2) -> ((Dupla<Estacion, LocalDate>) d1).segundo.compareTo(((Dupla<Estacion, LocalDate>) d2).segundo));
 		
 		List<Estacion> ordenMantenimientos = new LinkedList<Estacion>();
 		
@@ -559,13 +567,16 @@ public class RedDeTransporte             // i.e. un digrafo
 				auxFecha = LocalDate.of(1970, 1, 1);
 			else
 				auxFecha = this.getTareaDeMantenimiento(
-					auxMantenimientos.get(auxMantenimientos.size() - 1)).getFechaInicio();
+					auxMantenimientos.get(auxMantenimientos.size() - 1)
+				).getFechaInicio();
 		
 			monticuloMantenimientos.add(new Dupla<Estacion, LocalDate>(e, auxFecha));
 		}
 		
-		for (Object d : monticuloMantenimientos)
-			ordenMantenimientos.add(((Dupla<Estacion, LocalDate>) d).primero);
+		while(!monticuloMantenimientos.isEmpty())
+			ordenMantenimientos.add(
+				((Dupla<Estacion, LocalDate>) monticuloMantenimientos.remove()).primero
+			);
 		
 		return ordenMantenimientos;
 	}

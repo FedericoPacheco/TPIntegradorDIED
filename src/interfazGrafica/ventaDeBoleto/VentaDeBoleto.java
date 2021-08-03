@@ -180,8 +180,8 @@ public class VentaDeBoleto extends JPanel
 								txtfCorreo.getText(),
 								txtfNombre.getText(),
 								LocalDate.now(),
-								caminoStr.get(0),
-								caminoStr.get(caminoStr.size() - 1),
+								redDeTransporte.getEstacion(auxDupla.camino.get(0).getIdOrigen()).getNombre(),
+								redDeTransporte.getEstacion(auxDupla.camino.get(auxDupla.camino.size() - 1).getIdDestino()).getNombre(),
 								calcularCostoCamino(auxDupla.camino),
 								caminoStr
 							);
