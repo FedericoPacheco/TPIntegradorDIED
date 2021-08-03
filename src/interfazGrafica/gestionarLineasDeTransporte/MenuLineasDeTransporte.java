@@ -5,13 +5,13 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.MenuGenerico;
+import interfazGrafica.utilidades.Menu;
 
 @SuppressWarnings("serial")
 public class MenuLineasDeTransporte extends JPanel
 {
 	private JFrame ventana;
-	private MenuGenerico menu;
+	private Menu menu;
 	
 	private RedDeTransporte redDeTransporte;
 	
@@ -20,10 +20,10 @@ public class MenuLineasDeTransporte extends JPanel
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
 		
-		menu = new MenuGenerico(ventana, this, panelPadre);
+		menu = new Menu(ventana, this, panelPadre);
 		
 		this.completarComponentes();
-		menu.armarMenu();
+		menu.armar();
 	}
 	
 	private void completarComponentes() 
