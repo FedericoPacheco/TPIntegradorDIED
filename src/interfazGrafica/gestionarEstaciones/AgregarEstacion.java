@@ -4,7 +4,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -16,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import entidades.Estacion;
-import entidades.TareaDeMantenimiento;
 import grafo.RedDeTransporte;
 
 @SuppressWarnings("serial")
@@ -156,20 +154,9 @@ public class AgregarEstacion extends JPanel
 					try 
 					{
 						redDeTransporte.addEstacion(estacion);
-						
-						if (estado == Estacion.Estado.EN_MANTENIMIENTO)
-						{
-							TareaDeMantenimiento tarea = new TareaDeMantenimiento(
-								LocalDate.now(), 
-								null, 
-								""  // Ver como hacer esto
-							);
-							
-							redDeTransporte.addTareaDeMantenimiento(tarea, estacion);
-							estacion.addIdMantenimiento(tarea.getId());
-						}
+						new ObservacionesMantenimiento(ventana, estacion, redDeTransporte);
 					} 
-					catch (SQLException | ClassNotFoundException e1) {
+					catch (SQLException e1) {
 						e1.printStackTrace();
 					}
 						

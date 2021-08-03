@@ -157,7 +157,7 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
              		{
              			if (estaciones.get(i).getEstado() == Estacion.Estado.OPERATIVA)
      					{
-     						this.crearVentanaObservaciones(estaciones.get(i));
+     						new ObservacionesMantenimiento(ventana, estaciones.get(i), redDeTransporte);
      						estaciones.get(i).setEstado(Estacion.Estado.EN_MANTENIMIENTO);
      					}
              		}
@@ -183,81 +183,12 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 		}
 	}
 	
-	public void iniciarTareaDeMantenimiento(Estacion estacion, String observaciones) throws ClassNotFoundException, SQLException
-	{
-		TareaDeMantenimiento tareaDeMantenimiento = new TareaDeMantenimiento(LocalDate.now(), null, observaciones);
-		redDeTransporte.addTareaDeMantenimiento(tareaDeMantenimiento, estacion);
-		estacion.addIdMantenimiento(tareaDeMantenimiento.getId());
-	}
-	
 	public void finalizarTareaDeMantenimiento(Estacion estacion) throws ClassNotFoundException, SQLException 
 	{
-		Integer idUltitmoMantenimiento = estacion.getIdsMantenimientosRealizados().get(estacion.getIdsMantenimientosRealizados().size() - 1);
+		Integer idUltitmoMantenimiento = 
+			estacion.getIdsMantenimientosRealizados().get(estacion.getIdsMantenimientosRealizados().size() - 1);
 		TareaDeMantenimiento ultimoMantenimiento = redDeTransporte.getTareaDeMantenimiento(idUltitmoMantenimiento);
 		ultimoMantenimiento.setFechaFin(LocalDate.now());
 		redDeTransporte.updateTareaDeMantenimiento(ultimoMantenimiento, estacion);
-	}
-	
-	public void crearVentanaObservaciones(Estacion estacion)
-	{
-		JFrame ventanaObservaciones = new JFrame();
-		ventanaObservaciones.setTitle("Observaciones de tarea de mantenimiento"); 
-		ventanaObservaciones.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-		ventanaObservaciones.setContentPane(new AgregarObservaciones(ventanaObservaciones, ventana, this, estacion));
-		ventanaObservaciones.pack();
-		ventanaObservaciones.setLocationRelativeTo(ventana);
-		ventanaObservaciones.setVisible(true);
-	}
-	
-	static class AgregarObservaciones extends JPanel
-	{
-		private GridBagConstraints gbc;
-		private static JFrame ventanaPadre;
-		
-		public AgregarObservaciones(
-			JFrame ventanaObservaciones, JFrame ventanaPadre, 
-			ConsultarYModificarEstaciones panelPadre, Estacion estacion
-		)
-		{
-			AgregarObservaciones.ventanaPadre = ventanaPadre;
-			ventanaPadre.setEnabled(false);
-	
-			
-			gbc = new GridBagConstraints();
-			this.setLayout(new GridBagLayout());
-			
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			JTextArea txta1 = new JTextArea(20, 50);
-			txta1.setEditable(true);
-			JScrollPane sp1 = new JScrollPane(txta1);
-			this.add(sp1, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 1;
-			gbc.weightx = 1;
-			gbc.fill = GridBagConstraints.CENTER;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			JButton btn1 = new JButton("Aceptar");
-			this.add(btn1, gbc);
-			btn1.addActionListener(
-				e -> { 
-						try {
-							panelPadre.iniciarTareaDeMantenimiento(estacion, txta1.getText());
-						} catch (ClassNotFoundException | SQLException e1) {
-							e1.printStackTrace();
-						}
-						ventanaObservaciones.dispose(); 
-						AgregarObservaciones.volverAVentanaPrincipal();
-					 }
-			);
-		}
-		
-		public static void volverAVentanaPrincipal() 
-		{
-			ventanaPadre.setEnabled(true);
-			ventanaPadre.setVisible(true);
-		}
 	}
 }

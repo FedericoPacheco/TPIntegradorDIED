@@ -124,11 +124,7 @@ public class DibujoRedDeTransporte extends JPanel
 			ANCHO_BTN,
 			ALTO_BTN
 		);
-		btnLeyenda.addActionListener(
-			e -> {
-					Leyenda leyenda = new Leyenda();
-				 }
-		);
+		btnLeyenda.addActionListener(e -> new Leyenda());
 		this.add(btnLeyenda);
 		
 		btnAceptar = new JButton("Aceptar");
@@ -371,7 +367,6 @@ public class DibujoRedDeTransporte extends JPanel
 				gbc.gridy = i;
 				panel.add(auxLblColor, gbc);
 		
-				System.out.println(i);
 				i++;
 			}			
 			
