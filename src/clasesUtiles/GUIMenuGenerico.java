@@ -1,4 +1,4 @@
-package interfazGrafica.utilidades;
+package clasesUtiles;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

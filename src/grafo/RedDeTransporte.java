@@ -16,6 +16,8 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import org.apache.commons.collections.buffer.PriorityBuffer;
 
+import clasesUtiles.Dupla;
+import clasesUtiles.Tripleta;
 import entidades.db.BoletoDB;
 import entidades.db.EstacionDB;
 import entidades.db.LineaDeTransporteDB;
@@ -26,8 +28,6 @@ import entidades.valueObjects.Estacion;
 import entidades.valueObjects.LineaDeTransporte;
 import entidades.valueObjects.TareaDeMantenimiento;
 import entidades.valueObjects.Tramo;
-import interfazGrafica.utilidades.Dupla;
-import interfazGrafica.utilidades.Tripleta;
 
 // https://www.youtube.com/watch?v=XB4MIexjvY0
 // https://stackoverflow.com/questions/28998597/how-to-save-shortest-path-in-dijkstra-algorithm

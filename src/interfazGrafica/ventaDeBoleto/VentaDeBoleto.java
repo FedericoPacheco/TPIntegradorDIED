@@ -15,12 +15,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import clasesUtiles.Dupla;
+import clasesUtiles.GUIAgregarEntidadGenerico;
 import entidades.valueObjects.Boleto;
 import entidades.valueObjects.Estacion;
 import entidades.valueObjects.Tramo;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.GUIAgregarEntidadGenerico;
-import interfazGrafica.utilidades.Dupla;
 
 @SuppressWarnings("serial")
 public class VentaDeBoleto extends JPanel 
@@ -79,9 +79,9 @@ public class VentaDeBoleto extends JPanel
 		ActionListener a =
 			e -> {
 					if (cbOrigen.getSelectedItem().equals(cbDestino.getSelectedItem()))
-						agregarBoleto.setEnabled(false);
+						agregarBoleto.activarAceptar(false);
 					else
-						agregarBoleto.setEnabled(true);
+						agregarBoleto.activarAceptar(true);
 				 };
 		cbOrigen.addActionListener(a);
 		cbDestino.addActionListener(a);
@@ -115,31 +115,36 @@ public class VentaDeBoleto extends JPanel
 							break;
 					}
 					
-					if (!auxDupla.segundo.isEmpty())
-					{
-						List<String> caminoStr = VentaDeBoleto.getCaminoStr(auxDupla.segundo, redDeTransporte);
-						
-						Boleto auxBoleto = new Boleto(
-								txtfCorreo.getText(),
-								txtfNombre.getText(),
-								LocalDate.now(),
-								redDeTransporte.getEstacion(auxDupla.segundo.get(0).getIdOrigen()).getNombre(),
-								redDeTransporte.getEstacion(auxDupla.segundo.get(auxDupla.segundo.size() - 1).getIdDestino()).getNombre(),
-								calcularCostoCamino(auxDupla.segundo),
-								caminoStr
-							);
-							
-							try {
-								redDeTransporte.addBoleto(auxBoleto);
-							} catch (ClassNotFoundException | SQLException e1) {
-								e1.printStackTrace();
-							}
-							
-							ventana.setContentPane(new DibujoRedDeTransporte(ventana, padre, redDeTransporte, auxDupla.segundo));
-					}
+					if (txtfCorreo.getText().equals("") || txtfNombre.getText().equals("")) 
+						JOptionPane.showMessageDialog(ventana, "Complete los datos restantes, por favor.", "", JOptionPane.ERROR_MESSAGE);
 					else
-						JOptionPane.showMessageDialog(ventana, "Lo sentimos. No existen caminos posibles.");				
-				 }			
+					{
+						if (!auxDupla.segundo.isEmpty())
+						{
+							List<String> caminoStr = VentaDeBoleto.getCaminoStr(auxDupla.segundo, redDeTransporte);
+							
+							Boleto auxBoleto = new Boleto(
+									txtfCorreo.getText(),
+									txtfNombre.getText(),
+									LocalDate.now(),
+									redDeTransporte.getEstacion(auxDupla.segundo.get(0).getIdOrigen()).getNombre(),
+									redDeTransporte.getEstacion(auxDupla.segundo.get(auxDupla.segundo.size() - 1).getIdDestino()).getNombre(),
+									calcularCostoCamino(auxDupla.segundo),
+									caminoStr
+								);
+								
+								try {
+									redDeTransporte.addBoleto(auxBoleto);
+								} catch (ClassNotFoundException | SQLException e1) {
+									e1.printStackTrace();
+								}
+								
+								ventana.setContentPane(new DibujoRedDeTransporte(ventana, padre, redDeTransporte, auxDupla.segundo));
+						}
+						else
+							JOptionPane.showMessageDialog(ventana, "No existen caminos posibles entre las estaciones especificadas.", "", JOptionPane.INFORMATION_MESSAGE);				
+					}
+				}			
 		);  
 		
 		

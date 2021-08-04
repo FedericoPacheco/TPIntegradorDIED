@@ -1,4 +1,4 @@
-package interfazGrafica.utilidades;
+package clasesUtiles;
 
 import java.util.ArrayList;
 import java.util.List;

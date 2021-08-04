@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.SQLException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -23,10 +25,10 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
+import clasesUtiles.ModeloTablaGenerico;
 import entidades.valueObjects.Estacion;
 import entidades.valueObjects.TareaDeMantenimiento;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 // https://stackoverflow.com/questions/3029079/how-to-disable-main-jframe-when-open-new-jframe
 // https://stackoverflow.com/questions/29807260/how-to-close-current-jframe
@@ -124,13 +126,28 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
         	switch(j)
      		{
             	case 1:
-            		estaciones.get(i).setNombre((String) datoModificado);
-             		break;
+            		if (!((String) datoModificado).equals(""))
+            			estaciones.get(i).setNombre((String) datoModificado);
+            		else
+            		{
+            			JOptionPane.showMessageDialog(ventana, "El nombre no puede ser vacío.", "", JOptionPane.INFORMATION_MESSAGE);
+            			tbl.setValueAt(estaciones.get(i).getNombre(), i, j);
+            		}
+            		break;
              	case 2: 
-             		estaciones.get(i).setHoraApertura(LocalTime.parse((String) datoModificado, formatoHora));
+             		try { estaciones.get(i).setHoraApertura(LocalTime.parse((String) datoModificado, formatoHora)); }
+             		catch (DateTimeException e1) 
+             		{
+                    	JOptionPane.showMessageDialog(ventana, "Hora de apertura incorrecta.", "", JOptionPane.INFORMATION_MESSAGE);
+                    	tbl.setValueAt(estaciones.get(i).getHoraApertura().toString(), i, j);
+                    }
              		break;
              	case 3: 
-             		estaciones.get(i).setHoraCierre(LocalTime.parse((String) datoModificado, formatoHora));
+             		try { estaciones.get(i).setHoraCierre(LocalTime.parse((String) datoModificado, formatoHora)); }
+             		catch (DateTimeException e1) {
+                    	JOptionPane.showMessageDialog(ventana, "Hora de cierre incorrecta.", "", JOptionPane.INFORMATION_MESSAGE);
+                    	tbl.setValueAt(estaciones.get(i).getHoraCierre().toString(), i, j);
+                    }
              		break;
              	case 4: 
              		if (estado.getSelectedItem().equals("Operativa"))

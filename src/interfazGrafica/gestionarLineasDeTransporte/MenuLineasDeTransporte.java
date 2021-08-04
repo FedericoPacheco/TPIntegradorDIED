@@ -4,12 +4,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import clasesUtiles.GUIMenuGenerico;
 import grafo.RedDeTransporte;
 import interfazGrafica.gestionarLineasDeTransporte.abmc.AgregarLineaDeTransporte;
 import interfazGrafica.gestionarLineasDeTransporte.abmc.ConsultarYModificarLineasDeTransporte;
 import interfazGrafica.gestionarLineasDeTransporte.abmc.EliminarLineaDeTransporte;
 import interfazGrafica.gestionarLineasDeTransporte.abmc.GestionarTramosLineaDeTransporte;
-import interfazGrafica.utilidades.GUIMenuGenerico;
 
 @SuppressWarnings("serial")
 public class MenuLineasDeTransporte extends JPanel

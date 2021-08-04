@@ -13,9 +13,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import clasesUtiles.ModeloTablaGenerico;
 import entidades.valueObjects.Estacion;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")
 public class ProximoMantenimiento extends JPanel 

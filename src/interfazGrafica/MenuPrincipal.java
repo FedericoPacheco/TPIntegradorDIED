@@ -6,10 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import clasesUtiles.GUIMenuGenerico;
 import grafo.RedDeTransporte;
 import interfazGrafica.gestionarEstaciones.MenuEstaciones;
 import interfazGrafica.gestionarLineasDeTransporte.MenuLineasDeTransporte;
-import interfazGrafica.utilidades.GUIMenuGenerico;
 import interfazGrafica.ventaDeBoleto.VentaDeBoleto;
 
 @SuppressWarnings("serial")

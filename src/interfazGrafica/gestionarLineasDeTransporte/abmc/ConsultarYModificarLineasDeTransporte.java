@@ -16,6 +16,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,9 +25,9 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
+import clasesUtiles.ModeloTablaGenerico;
 import entidades.valueObjects.LineaDeTransporte;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")
 public class ConsultarYModificarLineasDeTransporte extends JPanel implements TableModelListener
@@ -143,7 +144,13 @@ public class ConsultarYModificarLineasDeTransporte extends JPanel implements Tab
         switch(j)
 		{
         	case 1:
-        		lineasDeTransporte.get(i).setNombre((String) datoModificado);
+        		if (!((String) datoModificado).equals(""))
+        			lineasDeTransporte.get(i).setNombre((String) datoModificado);
+        		else
+        		{
+        			JOptionPane.showMessageDialog(ventana, "El nombre no puede ser vacío.", "", JOptionPane.INFORMATION_MESSAGE);
+        			tbl.setValueAt(lineasDeTransporte.get(i).getNombre(), i, j);
+        		}
         		break;
         	case 2: 
         		lineasDeTransporte.get(i).setColor((String) datoModificado);

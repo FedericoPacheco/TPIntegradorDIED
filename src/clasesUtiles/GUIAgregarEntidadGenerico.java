@@ -1,4 +1,4 @@
-package interfazGrafica.utilidades;
+package clasesUtiles;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -26,6 +26,7 @@ public class GUIAgregarEntidadGenerico
 	
 	private JFrame ventana;
 	private JPanel panel;
+	
 	private void init()
 	{
 		btnVolver = new JButton("Volver");
@@ -41,7 +42,7 @@ public class GUIAgregarEntidadGenerico
 		panel.setLayout(new GridBagLayout());
 	}
 	
-	public GUIAgregarEntidadGenerico(JPanel panel, JFrame ventanaPadre, String tituloVentana) // Interfaz en una nueva ventana
+	public GUIAgregarEntidadGenerico(JFrame ventanaPadre, JPanel panel, String tituloVentana) // Interfaz en una nueva ventana
 	{
 		this.panel = panel;
 		this.init();
@@ -134,7 +135,7 @@ public class GUIAgregarEntidadGenerico
 			a.actionPerformed(null);
 	}
 	
-	public void setEnabled(Boolean activado) {
+	public void activarAceptar(Boolean activado) {
 		btnAceptar.setEnabled(activado);
 	}
 
@@ -159,5 +160,8 @@ public class GUIAgregarEntidadGenerico
 		return this;
 	}
 	
+	public JFrame getVentana() {
+		return ventana;
+	}
 	
 }

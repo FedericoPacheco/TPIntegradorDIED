@@ -1,17 +1,19 @@
 package interfazGrafica.gestionarEstaciones.abmc;
 
 import java.sql.SQLException;
+import java.time.DateTimeException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import clasesUtiles.GUIAgregarEntidadGenerico;
 import entidades.valueObjects.Estacion;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.GUIAgregarEntidadGenerico;
 
 @SuppressWarnings("serial")
 public class AgregarEstacion extends JPanel
@@ -55,35 +57,48 @@ public class AgregarEstacion extends JPanel
 			.addComponente(cbEstado);
 		
 		agregarEstacion.setAccionAceptar(
-			e -> {
-					Estacion.Estado estado;
-					if (((String) cbEstado.getSelectedItem()).equals("Operativa")) 
-						estado = Estacion.Estado.OPERATIVA;
-					else	
-						estado = Estacion.Estado.EN_MANTENIMIENTO;						
-					
-					DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
-					Estacion estacion = new Estacion(
-						txtfNombre.getText(),
-						LocalTime.parse(txtfHoraApertura.getText(), formatoHora),
-						LocalTime.parse(txtfHoraCierre.getText(), formatoHora),
-						estado
-					);
-					
-					try {
-						redDeTransporte.addEstacion(estacion);
-					} 
-					catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-					
-					if (estado == Estacion.Estado.EN_MANTENIMIENTO)
-						new ObservacionesMantenimiento(ventana, estacion, redDeTransporte);
+			e -> { 
+					if (txtfNombre.getText().equals("") || txtfHoraApertura.getText().equals("") || txtfHoraCierre.getText().equals(""))
+						JOptionPane.showMessageDialog(ventana, "Complete los datos restantes, por favor.", "", JOptionPane.ERROR_MESSAGE);
+					else
+					{
+						Estacion.Estado estado;
+						if (((String) cbEstado.getSelectedItem()).equals("Operativa")) 
+							estado = Estacion.Estado.OPERATIVA;
+						else	
+							estado = Estacion.Estado.EN_MANTENIMIENTO;						
 						
-					txtfNombre.setText("");
-					txtfHoraApertura.setText("");
-					txtfHoraCierre.setText("");
-					cbEstado.setSelectedItem("Operativa");
+						DateTimeFormatter formatoHora = DateTimeFormatter.ofPattern("HH:mm");
+						
+						try
+						{
+							Estacion estacion = new Estacion(
+								txtfNombre.getText(),
+								LocalTime.parse(txtfHoraApertura.getText(), formatoHora),
+								LocalTime.parse(txtfHoraCierre.getText(), formatoHora),
+								estado
+							);
+							
+							redDeTransporte.addEstacion(estacion);
+							
+							if (estado == Estacion.Estado.EN_MANTENIMIENTO)
+								new ObservacionesMantenimiento(ventana, estacion, redDeTransporte);
+							
+							txtfNombre.setText("");
+							txtfHoraApertura.setText("");
+							txtfHoraCierre.setText("");
+							cbEstado.setSelectedItem("Operativa");
+						}
+						catch(DateTimeException e1) 
+						{
+							JOptionPane.showMessageDialog(ventana, "Hora de apertura o cierre incorrectos.", "", JOptionPane.INFORMATION_MESSAGE);
+							txtfHoraApertura.setText("");
+							txtfHoraCierre.setText("");
+						}
+						catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}
 				 }			
 		);  
 	}

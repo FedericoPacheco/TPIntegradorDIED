@@ -4,8 +4,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import clasesUtiles.GUIMenuGenerico;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.GUIMenuGenerico;
 
 @SuppressWarnings("serial")
 public class MenuInformacionAdicionalEstaciones extends JPanel

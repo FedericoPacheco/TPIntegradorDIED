@@ -17,10 +17,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import clasesUtiles.Dupla;
+import clasesUtiles.ModeloTablaGenerico;
 import entidades.valueObjects.Estacion;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.Dupla;
-import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")
 public class EstacionRank extends JPanel 

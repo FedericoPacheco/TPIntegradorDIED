@@ -4,12 +4,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import clasesUtiles.GUIMenuGenerico;
 import grafo.RedDeTransporte;
 import interfazGrafica.gestionarEstaciones.abmc.AgregarEstacion;
 import interfazGrafica.gestionarEstaciones.abmc.ConsultarYModificarEstaciones;
 import interfazGrafica.gestionarEstaciones.abmc.EliminarEstacion;
 import interfazGrafica.gestionarEstaciones.informacionAdicional.MenuInformacionAdicionalEstaciones;
-import interfazGrafica.utilidades.GUIMenuGenerico;
 
 @SuppressWarnings("serial")
 public class MenuEstaciones extends JPanel
