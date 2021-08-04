@@ -17,8 +17,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.WindowConstants;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -81,7 +79,6 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 	    this.armarPanel();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void armarPanel()
 	{
 		btn1 = new JButton("Volver");
