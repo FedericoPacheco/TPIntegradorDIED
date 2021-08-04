@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import entidades.valueObjects.LineaDeTransporte;
@@ -23,7 +24,7 @@ public class EliminarLineaDeTransporte extends JPanel
 	private JPanel padre;
 	private GridBagConstraints gbc;
 	private JComboBox<String> cb;
-	private JButton btn1, btn2;
+	private JButton btnEliminar, btnVolver;
 	private JLabel lbl1;
 	
 	Map<String, LineaDeTransporte> lineasDeTransporteCb;
@@ -43,8 +44,8 @@ public class EliminarLineaDeTransporte extends JPanel
 
 	private void armarPanel() 
 	{
-		btn1 = new JButton("Eliminar");
-		btn2 = new JButton("Volver");
+		btnEliminar = new JButton("Eliminar");
+		btnVolver = new JButton("Volver");
 		lbl1 = new JLabel("Seleccione la línea de transporte que desea eliminar: ");
 		cb = new JComboBox<String>();
 	
@@ -56,7 +57,7 @@ public class EliminarLineaDeTransporte extends JPanel
 		
 		if(cb.getItemCount() == 0)
 		{
-			btn1.setEnabled(false);
+			btnEliminar.setEnabled(false);
 			cb.setEnabled(false);
 		}
 		
@@ -88,25 +89,30 @@ public class EliminarLineaDeTransporte extends JPanel
 		gbc.weightx = 1.0;
 		gbc.weighty = 0.0;
 		gbc.insets = new Insets(5, 20, 0, 20);
-		this.add(btn1, gbc);
-		btn1.addActionListener(
+		this.add(btnEliminar, gbc);
+		btnEliminar.addActionListener(
 			e -> {
 					if (cb.getItemCount() > 0)
 					{
-						LineaDeTransporte auxLineaDeTransporte = lineasDeTransporteCb.get(cb.getSelectedItem());
-						cb.removeItem(cb.getSelectedItem());
-						
-						try {
-							if (auxLineaDeTransporte != null) 
-								redDeTransporte.deleteLineaDeTransporte(auxLineaDeTransporte);
-						} catch (ClassNotFoundException | SQLException e1) {
-							e1.printStackTrace();
-						}
-						
-						if (cb.getItemCount() == 0)
+						if (JOptionPane.showConfirmDialog(ventana, "¿Está seguro?", "", 
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) 
+							== JOptionPane.YES_OPTION)
 						{
-							btn1.setEnabled(false);
-							cb.setEnabled(false);
+							LineaDeTransporte auxLineaDeTransporte = lineasDeTransporteCb.get(cb.getSelectedItem());
+							cb.removeItem(cb.getSelectedItem());
+							
+							try {
+								if (auxLineaDeTransporte != null) 
+									redDeTransporte.deleteLineaDeTransporte(auxLineaDeTransporte);
+							} catch (ClassNotFoundException | SQLException e1) {
+								e1.printStackTrace();
+							}
+							
+							if (cb.getItemCount() == 0)
+							{
+								btnEliminar.setEnabled(false);
+								cb.setEnabled(false);
+							}
 						}
 					}
 				 }
@@ -120,8 +126,8 @@ public class EliminarLineaDeTransporte extends JPanel
 		gbc.weightx = 1.0;
 		gbc.weighty = 0.0;
 		gbc.insets = new Insets(30, 20, 10, 20);
-		this.add(btn2, gbc);
-		btn2.addActionListener(
+		this.add(btnVolver, gbc);
+		btnVolver.addActionListener(
 			e -> {
 					ventana.setContentPane(padre);
 					ventana.pack();
