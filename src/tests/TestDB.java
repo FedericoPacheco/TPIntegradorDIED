@@ -6,16 +6,16 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import baseDeDatos.BoletoDB;
-import baseDeDatos.EstacionDB;
-import baseDeDatos.LineaDeTransporteDB;
-import baseDeDatos.TareaDeMantenimientoDB;
-import baseDeDatos.TramoDB;
-import entidades.Boleto;
-import entidades.Estacion;
-import entidades.LineaDeTransporte;
-import entidades.TareaDeMantenimiento;
-import entidades.Tramo;
+import entidades.db.BoletoDB;
+import entidades.db.EstacionDB;
+import entidades.db.LineaDeTransporteDB;
+import entidades.db.TareaDeMantenimientoDB;
+import entidades.db.TramoDB;
+import entidades.valueObjects.Boleto;
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.LineaDeTransporte;
+import entidades.valueObjects.TareaDeMantenimiento;
+import entidades.valueObjects.Tramo;
 
 public class TestDB 
 {

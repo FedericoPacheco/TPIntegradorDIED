@@ -1,4 +1,4 @@
-package baseDeDatos;
+package entidades.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import entidades.TareaDeMantenimiento;
+import entidades.valueObjects.TareaDeMantenimiento;
 
 public class TareaDeMantenimientoDB extends EntidadDB
 {

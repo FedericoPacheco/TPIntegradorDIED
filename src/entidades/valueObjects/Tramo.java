@@ -1,4 +1,4 @@
-package entidades;
+package entidades.valueObjects;
 
 public class Tramo implements Comparable<Tramo>
 {

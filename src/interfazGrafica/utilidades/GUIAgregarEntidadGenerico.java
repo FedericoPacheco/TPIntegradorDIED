@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-public class AgregarEntidadGenerico 
+public class GUIAgregarEntidadGenerico 
 {
 	private JButton btnAceptar, btnVolver;
 	private List<String> etiquetas;
@@ -41,7 +41,7 @@ public class AgregarEntidadGenerico
 		panel.setLayout(new GridBagLayout());
 	}
 	
-	public AgregarEntidadGenerico(JPanel panel, JFrame ventanaPadre, String tituloVentana) // Interfaz en una nueva ventana
+	public GUIAgregarEntidadGenerico(JPanel panel, JFrame ventanaPadre, String tituloVentana) // Interfaz en una nueva ventana
 	{
 		this.panel = panel;
 		this.init();
@@ -67,7 +67,7 @@ public class AgregarEntidadGenerico
 		);
 	}
 	
-	public AgregarEntidadGenerico(JFrame ventanaPadre, JPanel panel, JPanel panelPadre) // Interfaz en la misma ventana
+	public GUIAgregarEntidadGenerico(JFrame ventanaPadre, JPanel panel, JPanel panelPadre) // Interfaz en la misma ventana
 	{
 		this.panel = panel;
 		
@@ -139,22 +139,22 @@ public class AgregarEntidadGenerico
 	}
 
 	
-	public AgregarEntidadGenerico addEtiqueta(String etiqueta) {
+	public GUIAgregarEntidadGenerico addEtiqueta(String etiqueta) {
 		etiquetas.add(etiqueta);
 		return this;
 	}
 	
-	public AgregarEntidadGenerico addComponente(JComponent componente) {
+	public GUIAgregarEntidadGenerico addComponente(JComponent componente) {
 		componentes.add(componente);
 		return this;
 	}
 	
-	public AgregarEntidadGenerico addAccionAuxiliar(ActionListener accion) {
+	public GUIAgregarEntidadGenerico addAccionAuxiliar(ActionListener accion) {
 		accionesAuxiliares.add(accion);
 		return this;
 	}
 	
-	public AgregarEntidadGenerico setAccionAceptar(ActionListener accionAceptar) {
+	public GUIAgregarEntidadGenerico setAccionAceptar(ActionListener accionAceptar) {
 		this.accionAceptar = accionAceptar;
 		return this;
 	}

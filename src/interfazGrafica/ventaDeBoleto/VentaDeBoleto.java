@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +15,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import entidades.Boleto;
-import entidades.Estacion;
-import entidades.Tramo;
-import grafo.DuplaCostoCamino;
+import entidades.valueObjects.Boleto;
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.Tramo;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidadGenerico;
+import interfazGrafica.utilidades.GUIAgregarEntidadGenerico;
+import interfazGrafica.utilidades.Dupla;
 
 @SuppressWarnings("serial")
 public class VentaDeBoleto extends JPanel 
@@ -28,7 +29,7 @@ public class VentaDeBoleto extends JPanel
 	private JPanel padre;
 	
 	private RedDeTransporte redDeTransporte;
-	private AgregarEntidadGenerico agregarBoleto;
+	private GUIAgregarEntidadGenerico agregarBoleto;
 	private Map<String, Estacion> estacionCb;
 	
 	public VentaDeBoleto(JFrame ventana, JPanel panelPadre, RedDeTransporte redDeTransporte)
@@ -37,7 +38,7 @@ public class VentaDeBoleto extends JPanel
 		this.ventana = ventana;
 		this.padre = panelPadre;
 		
-		agregarBoleto = new AgregarEntidadGenerico(ventana, this, panelPadre);
+		agregarBoleto = new GUIAgregarEntidadGenerico(ventana, this, panelPadre);
 		estacionCb = new HashMap<String, Estacion>();
 		
 		this.completarComponentes();
@@ -89,7 +90,7 @@ public class VentaDeBoleto extends JPanel
 		
 		agregarBoleto.setAccionAceptar(
 			e -> {
-					DuplaCostoCamino auxDupla = null;
+					Dupla<Double, LinkedList<Tramo>> auxDupla = null;
 				
 					switch((String) cbCamino.getSelectedItem())
 					{
@@ -114,17 +115,17 @@ public class VentaDeBoleto extends JPanel
 							break;
 					}
 					
-					if (!auxDupla.camino.isEmpty())
+					if (!auxDupla.segundo.isEmpty())
 					{
-						List<String> caminoStr = VentaDeBoleto.getCaminoStr(auxDupla.camino, redDeTransporte);
+						List<String> caminoStr = VentaDeBoleto.getCaminoStr(auxDupla.segundo, redDeTransporte);
 						
 						Boleto auxBoleto = new Boleto(
 								txtfCorreo.getText(),
 								txtfNombre.getText(),
 								LocalDate.now(),
-								redDeTransporte.getEstacion(auxDupla.camino.get(0).getIdOrigen()).getNombre(),
-								redDeTransporte.getEstacion(auxDupla.camino.get(auxDupla.camino.size() - 1).getIdDestino()).getNombre(),
-								calcularCostoCamino(auxDupla.camino),
+								redDeTransporte.getEstacion(auxDupla.segundo.get(0).getIdOrigen()).getNombre(),
+								redDeTransporte.getEstacion(auxDupla.segundo.get(auxDupla.segundo.size() - 1).getIdDestino()).getNombre(),
+								calcularCostoCamino(auxDupla.segundo),
 								caminoStr
 							);
 							
@@ -134,7 +135,7 @@ public class VentaDeBoleto extends JPanel
 								e1.printStackTrace();
 							}
 							
-							ventana.setContentPane(new DibujoRedDeTransporte(ventana, padre, redDeTransporte, auxDupla.camino));
+							ventana.setContentPane(new DibujoRedDeTransporte(ventana, padre, redDeTransporte, auxDupla.segundo));
 					}
 					else
 						JOptionPane.showMessageDialog(ventana, "Lo sentimos. No existen caminos posibles.");				
@@ -150,7 +151,7 @@ public class VentaDeBoleto extends JPanel
 			.addComponente(cbCamino);
 	}
 
-	public static Double calcularCostoCamino(ArrayList<Tramo> camino)
+	public static Double calcularCostoCamino(List<Tramo> camino)
 	{
 		Double suma = 0.0;
 		
@@ -160,7 +161,7 @@ public class VentaDeBoleto extends JPanel
 		return suma;
 	}
 
-	public static List<String> getCaminoStr(ArrayList<Tramo> camino, RedDeTransporte redDeTransporte) 
+	public static List<String> getCaminoStr(List<Tramo> camino, RedDeTransporte redDeTransporte) 
 	{
 		List<String> caminoStr = new ArrayList<String>();
 		

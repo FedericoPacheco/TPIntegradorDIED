@@ -9,13 +9,13 @@ import interfazGrafica.gestionarLineasDeTransporte.abmc.AgregarLineaDeTransporte
 import interfazGrafica.gestionarLineasDeTransporte.abmc.ConsultarYModificarLineasDeTransporte;
 import interfazGrafica.gestionarLineasDeTransporte.abmc.EliminarLineaDeTransporte;
 import interfazGrafica.gestionarLineasDeTransporte.abmc.GestionarTramosLineaDeTransporte;
-import interfazGrafica.utilidades.MenuGenerico;
+import interfazGrafica.utilidades.GUIMenuGenerico;
 
 @SuppressWarnings("serial")
 public class MenuLineasDeTransporte extends JPanel
 {
 	private JFrame ventana;
-	private MenuGenerico menu;
+	private GUIMenuGenerico menu;
 	
 	private RedDeTransporte redDeTransporte;
 	
@@ -24,7 +24,7 @@ public class MenuLineasDeTransporte extends JPanel
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
 		
-		menu = new MenuGenerico(ventana, this, panelPadre);
+		menu = new GUIMenuGenerico(ventana, this, panelPadre);
 		
 		this.completarComponentes();
 		menu.armar();

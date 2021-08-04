@@ -23,8 +23,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
-import entidades.Estacion;
-import entidades.TareaDeMantenimiento;
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.TareaDeMantenimiento;
 import grafo.RedDeTransporte;
 import interfazGrafica.utilidades.ModeloTablaGenerico;
 

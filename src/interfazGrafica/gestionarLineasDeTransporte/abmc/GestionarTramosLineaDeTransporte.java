@@ -21,11 +21,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import entidades.Estacion;
-import entidades.LineaDeTransporte;
-import entidades.Tramo;
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.LineaDeTransporte;
+import entidades.valueObjects.Tramo;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidadGenerico;
+import interfazGrafica.utilidades.GUIAgregarEntidadGenerico;
 import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 // https://stackoverflow.com/questions/3179136/jtable-how-to-refresh-table-model-after-insert-delete-or-update-the-data
@@ -373,13 +373,13 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 	{
 		private Tramo tramo;
 		
-		private AgregarEntidadGenerico agregarTramo;
+		private GUIAgregarEntidadGenerico agregarTramo;
 		
 		public AgregarDatosTramo(Tramo tramo) 
 		{	
 			this.tramo = tramo;
 			
-			agregarTramo = new AgregarEntidadGenerico(
+			agregarTramo = new GUIAgregarEntidadGenerico(
 					this, 
 					ventana,
 					redDeTransporte.getEstacion(tramo.getIdOrigen()).getNombre() + 

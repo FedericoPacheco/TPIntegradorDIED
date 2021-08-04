@@ -18,10 +18,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import entidades.Estacion;
-import entidades.Tramo;
-import grafo.Dupla;
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.Tramo;
 import grafo.RedDeTransporte;
+import interfazGrafica.utilidades.Dupla;
 import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")

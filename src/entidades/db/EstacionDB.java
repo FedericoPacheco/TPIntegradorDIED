@@ -1,4 +1,4 @@
-package baseDeDatos;
+package entidades.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,7 +6,8 @@ import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import entidades.Estacion;
+
+import entidades.valueObjects.Estacion;
 
 // https://jdbc.postgresql.org/documentation/head/8-date-time.html
 

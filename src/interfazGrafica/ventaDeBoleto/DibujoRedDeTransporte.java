@@ -17,15 +17,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.LineaDeTransporte;
+import entidades.valueObjects.Tramo;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import entidades.Estacion;
-import entidades.LineaDeTransporte;
-import entidades.Tramo;
 import grafo.RedDeTransporte;
 
 // https://docs.oracle.com/javase/7/docs/api/java/awt/BasicStroke.html
@@ -72,7 +72,7 @@ public class DibujoRedDeTransporte extends JPanel
 	private RedDeTransporte redDeTransporte;
 	private List<Tramo> camino;
 	
-	public DibujoRedDeTransporte(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte, ArrayList<Tramo> camino)
+	public DibujoRedDeTransporte(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte, List<Tramo> camino)
 	{
 		this.ventana = ventana;
 		this.padre = padre;

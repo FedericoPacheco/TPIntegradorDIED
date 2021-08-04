@@ -9,9 +9,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import entidades.Estacion;
+import entidades.valueObjects.Estacion;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidadGenerico;
+import interfazGrafica.utilidades.GUIAgregarEntidadGenerico;
 
 @SuppressWarnings("serial")
 public class AgregarEstacion extends JPanel
@@ -19,14 +19,14 @@ public class AgregarEstacion extends JPanel
 	private JFrame ventana;
 	
 	private RedDeTransporte redDeTransporte;
-	private AgregarEntidadGenerico agregarEstacion;
+	private GUIAgregarEntidadGenerico agregarEstacion;
 	
 	public AgregarEstacion(JFrame ventana, JPanel panelPadre, RedDeTransporte redDeTransporte)
 	{
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
 		
-		agregarEstacion = new AgregarEntidadGenerico(ventana, this, panelPadre);
+		agregarEstacion = new GUIAgregarEntidadGenerico(ventana, this, panelPadre);
 		
 		this.completarComponentes();
 		agregarEstacion.armar();

@@ -6,20 +6,20 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import entidades.LineaDeTransporte;
+import entidades.valueObjects.LineaDeTransporte;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidadGenerico;
+import interfazGrafica.utilidades.GUIAgregarEntidadGenerico;
 
 @SuppressWarnings("serial")
 public class AgregarLineaDeTransporte extends JPanel
 {
 	private RedDeTransporte redDeTransporte;
-	private AgregarEntidadGenerico agregarLinea;
+	private GUIAgregarEntidadGenerico agregarLinea;
 	
 	public AgregarLineaDeTransporte(JFrame ventana, JPanel panePadre, RedDeTransporte redDeTransporte)
 	{
 		this.redDeTransporte = redDeTransporte;
-		agregarLinea = new AgregarEntidadGenerico(ventana, this, panePadre);
+		agregarLinea = new GUIAgregarEntidadGenerico(ventana, this, panePadre);
 		
 		this.completarComponentes();
 		agregarLinea.armar();

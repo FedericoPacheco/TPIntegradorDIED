@@ -16,16 +16,18 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import org.apache.commons.collections.buffer.PriorityBuffer;
 
-import baseDeDatos.BoletoDB;
-import baseDeDatos.EstacionDB;
-import baseDeDatos.LineaDeTransporteDB;
-import baseDeDatos.TareaDeMantenimientoDB;
-import baseDeDatos.TramoDB;
-import entidades.Boleto;
-import entidades.Estacion;
-import entidades.LineaDeTransporte;
-import entidades.TareaDeMantenimiento;
-import entidades.Tramo;
+import entidades.db.BoletoDB;
+import entidades.db.EstacionDB;
+import entidades.db.LineaDeTransporteDB;
+import entidades.db.TareaDeMantenimientoDB;
+import entidades.db.TramoDB;
+import entidades.valueObjects.Boleto;
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.LineaDeTransporte;
+import entidades.valueObjects.TareaDeMantenimiento;
+import entidades.valueObjects.Tramo;
+import interfazGrafica.utilidades.Dupla;
+import interfazGrafica.utilidades.Tripleta;
 
 // https://www.youtube.com/watch?v=XB4MIexjvY0
 // https://stackoverflow.com/questions/28998597/how-to-save-shortest-path-in-dijkstra-algorithm
@@ -245,7 +247,7 @@ public class RedDeTransporte             // i.e. un digrafo
 	// -----------------------------------------------------------------------------------------------------------------------------------------------------
 	// Dijkstra: 
 		
-	public DuplaCostoCamino caminoMasRapido(Estacion estacionOrigen, Estacion estacionDestino) 
+	public Dupla<Double, LinkedList<Tramo>> caminoMasRapido(Estacion estacionOrigen, Estacion estacionDestino) 
 	{
 		return 
 			this.Dijkstra
@@ -254,7 +256,7 @@ public class RedDeTransporte             // i.e. un digrafo
 				(Tramo t) -> (double) t.getDuracionViajeEnMin()
 			).get(estacionDestino);
 	}
-	public DuplaCostoCamino caminoMasCorto(Estacion estacionOrigen, Estacion estacionDestino) 
+	public Dupla<Double, LinkedList<Tramo>> caminoMasCorto(Estacion estacionOrigen, Estacion estacionDestino) 
 	{
 		return 
 			this.Dijkstra
@@ -263,7 +265,7 @@ public class RedDeTransporte             // i.e. un digrafo
 				(Tramo t) -> (double) t.getDistanciaEnKm()
 			).get(estacionDestino);
 	}
-	public DuplaCostoCamino caminoMasBarato(Estacion estacionOrigen, Estacion estacionDestino) 
+	public Dupla<Double, LinkedList<Tramo>> caminoMasBarato(Estacion estacionOrigen, Estacion estacionDestino) 
 	{
 		return 
 			this.Dijkstra
@@ -273,44 +275,47 @@ public class RedDeTransporte             // i.e. un digrafo
 			).get(estacionDestino);
 	}
 	
-	@SuppressWarnings("unchecked")
-	//private Map<Estacion, Dupla<Integer, ArrayList<Tramo>>> Dijkstra(Estacion estacionOrigen) 
-	private Map<Estacion, DuplaCostoCamino> Dijkstra(Estacion estacionOrigen, Function<Tramo, Double> criterio)
+	@SuppressWarnings("unchecked") 
+	private Map<Estacion, Dupla<Double, LinkedList<Tramo>>> Dijkstra(Estacion estacionOrigen, Function<Tramo, Double> criterio)
 	{
-		//Dupla<Estacion, ArrayList<Tramo>> auxDupla1;
-		DuplaCostoCamino auxDupla;
-		Map<Estacion, DuplaCostoCamino> costoYCaminoHastaCadaEstacion 
-    		= new HashMap<Estacion, DuplaCostoCamino>();
+		/*
+			Dupla:
+				primero: costo
+				segundo: camino
+				
+			Tripleta:
+				primero: estacion
+				segundo: costo
+				tercero: camino
+		*/
+		
+		Dupla<Double, LinkedList<Tramo>> auxDupla;
+		Map<Estacion, Dupla<Double, LinkedList<Tramo>>> costoYCaminoHastaCadaEstacion 
+    		= new HashMap<Estacion, Dupla<Double, LinkedList<Tramo>>>();
     	
 		// Inicializar las distancias a "infinito"
     	for (Estacion e : estaciones)
     	{
-    		//auxDupla1 = new Dupla<Estacion, ArrayList<Tramo>>(Integer.MAX_VALUE, new ArrayList<Tramo>());
-    		auxDupla = new DuplaCostoCamino(Double.MAX_VALUE, new ArrayList<Tramo>());
-    		//costoYCaminoHastaCadaEstacion.put(e, auxDupla1);
+    		auxDupla = new Dupla<Double, LinkedList<Tramo>>(Double.MAX_VALUE, new LinkedList<Tramo>());
     		costoYCaminoHastaCadaEstacion.put(e, auxDupla);
     	}
-    	//auxDupla1 = new Dupla<Estacion, ArrayList<Tramo>>(0, new ArrayList<Tramo>());
-    	auxDupla = new DuplaCostoCamino(0.0, new ArrayList<Tramo>());
-    	//costoYCaminoHastaCadaEstacion.put(estacionOrigen, auxDupla1);
+    	auxDupla = new Dupla<Double, LinkedList<Tramo>>(0.0, new LinkedList<Tramo>());
     	costoYCaminoHastaCadaEstacion.put(estacionOrigen, auxDupla);
     	
     	// Visitados y pendientes
     	Set<Estacion> estacionesVisitadas = new HashSet<Estacion>();
-    	//TreeMap<Integer, Dupla<Estacion, ArrayList<Tramo>>> estacionesAVisitar 
-    	//	= new TreeMap<Integer, Dupla<Estacion, ArrayList<Tramo>>>();         // Pseudo-monticulo
-    	PriorityBuffer estacionesAVisitar = new PriorityBuffer();
+    	PriorityBuffer estacionesAVisitar = new PriorityBuffer(
+    		// https://stackoverflow.com/a/44356167
+    		(t1, t2) -> ((Tripleta<Estacion, Double, LinkedList<Tramo>>) t1).segundo.compareTo(
+    					((Tripleta<Estacion, Double, LinkedList<Tramo>>) t2).segundo)
+    	);
     	
-    	//Dupla<Estacion, ArrayList<Tramo>> auxDupla2
-    	//	= new Dupla<Estacion, ArrayList<Tramo>>(estacionOrigen, new ArrayList<Tramo>());
-    	//estacionesAVisitar.put(0, auxDupla2);
-    	estacionesAVisitar.add(new TripletaEstacionCostoCamino(estacionOrigen, 0.0, new ArrayList<Tramo>()));
+    	estacionesAVisitar.add(new Tripleta<Estacion, Double, LinkedList<Tramo>>(estacionOrigen, 0.0, new LinkedList<Tramo>()));
     	
     	// Iterar mientras haya estaciones pendientes
-    	//Entry<Integer, Dupla<Estacion, ArrayList<Tramo>>> estacion;
-    	TripletaEstacionCostoCamino auxTripleta;
-    	TripletaEstacionCostoCamino tripletaEstacion;
-    	ArrayList<Tramo> auxCamino;
+    	Tripleta<Estacion, Double, LinkedList<Tramo>> auxTripleta;
+    	Tripleta<Estacion, Double, LinkedList<Tramo>> tripletaEstacion;
+    	LinkedList<Tramo> auxCamino;
     	Tramo tramoMenosCostoso;
     	Double costoActualHastaEstacionAdyacente;
     	Double costoDeEstacionActualAAdyacente;
@@ -318,30 +323,22 @@ public class RedDeTransporte             // i.e. un digrafo
     	Double nuevoCostoTotal;
     	while(!estacionesAVisitar.isEmpty())
     	{
-    		//estacion = estacionesAVisitar.pollFirstEntry();  // Sacar el minimo (costo)
-    		tripletaEstacion = (TripletaEstacionCostoCamino) estacionesAVisitar.get();
+    		tripletaEstacion = (Tripleta<Estacion, Double, LinkedList<Tramo>>) estacionesAVisitar.get();
     		estacionesAVisitar.remove(tripletaEstacion);
-    		//estacionesVisitadas.add(estacion.getValue().primero);
-    		estacionesVisitadas.add(tripletaEstacion.estacion);
+    		estacionesVisitadas.add(tripletaEstacion.primero);
     		
-    		//for (Estacion estacionAdyacente : this.getEstacionesAdyacentes(estacion.getValue().primero))
-    		for (Estacion estacionAdyacente : this.getEstacionesAdyacentes(tripletaEstacion.estacion))
+    		for (Estacion estacionAdyacente : this.getEstacionesAdyacentes(tripletaEstacion.primero))
     		{
     			if (!estacionesVisitadas.contains(estacionAdyacente))
     			{
-    				//tramoMenosCostoso 
-    				//	= this.tramoDeMenorCosto(this.getTramosEntre(estacion.getValue().primero, estacionAdyacente));
-    				tramoMenosCostoso
-    					= this.tramoDeMenorCosto(
-    						this.getTramosEntre(tripletaEstacion.estacion, estacionAdyacente),
-    						criterio
-    					);
+    				tramoMenosCostoso = this.tramoDeMenorCosto(
+    					this.getTramosEntre(tripletaEstacion.primero, estacionAdyacente),
+    					criterio
+    				);
     				
     			    costoDeEstacionActualAAdyacente = (double) criterio.apply(tramoMenosCostoso);
-    			    //costoHastaEstacionActual = estacion.getKey();
-    			    costoHastaEstacionActual = tripletaEstacion.costo;
-    			    //costoActualHastaEstacionAdyacente = costoYCaminoHastaCadaEstacion.get(estacionAdyacente).primero;
-    			    costoActualHastaEstacionAdyacente = costoYCaminoHastaCadaEstacion.get(estacionAdyacente).costo;
+    			    costoHastaEstacionActual = tripletaEstacion.segundo;
+    			    costoActualHastaEstacionAdyacente = costoYCaminoHastaCadaEstacion.get(estacionAdyacente).primero;
     			    nuevoCostoTotal = costoHastaEstacionActual + costoDeEstacionActualAAdyacente;
     				
     				// Si se encuentra un nuevo camino menos costoso, cambiar el "resultado final" (costoYCaminoHastaCadaEstacion)
@@ -350,24 +347,19 @@ public class RedDeTransporte             // i.e. un digrafo
     					// Por si acaso se hacen copias de los caminos xD
     					
     					// Actualizar costo y camino hasta nodoAdyacente
-    					//auxCamino = (ArrayList<Tramo>) estacion.getValue().segundo.clone();
-    					auxCamino = (ArrayList<Tramo>) tripletaEstacion.camino.clone();
+    					auxCamino = (LinkedList<Tramo>) tripletaEstacion.tercero.clone();
     					auxCamino.add(tramoMenosCostoso);
     					
-    					//auxDupla1 = new Dupla<Integer, ArrayList<Tramo>>(nuevoCostoTotal, auxCamino);
-    					auxDupla = new DuplaCostoCamino(nuevoCostoTotal, auxCamino);
+    					auxDupla = new Dupla<Double, LinkedList<Tramo>>(nuevoCostoTotal, auxCamino);
     					
-    					//costoYCaminoHastaCadaEstacion.put(estacionAdyacente, auxDupla1);
     					costoYCaminoHastaCadaEstacion.put(estacionAdyacente, auxDupla);
     					
     					
     					// Agregar estacion adyacente a la lista de pendientes
-    					auxCamino = (ArrayList<Tramo>) auxCamino.clone();
+    					auxCamino = (LinkedList<Tramo>) auxCamino.clone();
     					
-    					//auxDupla2 = new Dupla<Estacion, ArrayList<Tramo>>(estacionAdyacente, auxCamino);
-    					auxTripleta = new TripletaEstacionCostoCamino(estacionAdyacente, nuevoCostoTotal, auxCamino);
+    					auxTripleta = new Tripleta<Estacion, Double, LinkedList<Tramo>>(estacionAdyacente, nuevoCostoTotal, auxCamino);
     					
-    					//estacionesAVisitar.put(nuevoCostoTotal, auxDupla2);
     					estacionesAVisitar.add(auxTripleta);
     				}
     			}

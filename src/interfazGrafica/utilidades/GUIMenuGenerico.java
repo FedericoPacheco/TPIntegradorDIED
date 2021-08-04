@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class MenuGenerico extends JPanel
+public class GUIMenuGenerico extends JPanel
 {
 	private GridBagConstraints gbc;
 	private List<JComponent> componentes; 
@@ -21,7 +21,7 @@ public class MenuGenerico extends JPanel
 	private JPanel panel;
 	private JPanel panelPadre;
 
-	public MenuGenerico(JFrame ventana, JPanel panel, JPanel panelPadre) 
+	public GUIMenuGenerico(JFrame ventana, JPanel panel, JPanel panelPadre) 
 	{
 		this.ventana = ventana;
 		this.panel = panel;
@@ -71,7 +71,7 @@ public class MenuGenerico extends JPanel
 		}
 	}
 	
-	public MenuGenerico addComponente(JComponent componente) {
+	public GUIMenuGenerico addComponente(JComponent componente) {
 		componentes.add(componente);
 		return this;
 	}

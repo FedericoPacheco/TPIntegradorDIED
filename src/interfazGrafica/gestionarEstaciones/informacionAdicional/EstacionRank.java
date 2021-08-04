@@ -17,9 +17,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import entidades.Estacion;
-import grafo.Dupla;
+import entidades.valueObjects.Estacion;
 import grafo.RedDeTransporte;
+import interfazGrafica.utilidades.Dupla;
 import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")

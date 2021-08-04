@@ -20,7 +20,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
-import entidades.LineaDeTransporte;
+import entidades.valueObjects.LineaDeTransporte;
 import grafo.RedDeTransporte;
 import interfazGrafica.utilidades.ModeloTablaGenerico;
 

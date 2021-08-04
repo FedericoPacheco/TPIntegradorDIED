@@ -1,4 +1,4 @@
-package baseDeDatos;
+package entidades.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import entidades.Boleto;
+import entidades.valueObjects.Boleto;
 
 // https://stackoverflow.com/questions/48643892/jdbc-inserting-an-array-variable-into-a-postgresql-table
 // https://stackoverflow.com/questions/14935016/convert-a-result-set-from-sql-array-to-array-of-strings

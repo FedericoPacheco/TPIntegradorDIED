@@ -13,8 +13,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
-import entidades.Estacion;
-import entidades.TareaDeMantenimiento;
+import entidades.valueObjects.Estacion;
+import entidades.valueObjects.TareaDeMantenimiento;
 import grafo.RedDeTransporte;
 
 public class ObservacionesMantenimiento

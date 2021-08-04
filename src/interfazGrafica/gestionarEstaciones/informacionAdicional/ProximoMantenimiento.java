@@ -13,7 +13,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import entidades.Estacion;
+import entidades.valueObjects.Estacion;
 import grafo.RedDeTransporte;
 import interfazGrafica.utilidades.ModeloTablaGenerico;
 

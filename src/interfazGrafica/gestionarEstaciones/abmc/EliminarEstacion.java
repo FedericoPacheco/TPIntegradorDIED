@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import entidades.Estacion;
+import entidades.valueObjects.Estacion;
 import grafo.RedDeTransporte;
 
 @SuppressWarnings("serial")

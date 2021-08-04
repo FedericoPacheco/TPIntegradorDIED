@@ -1,4 +1,4 @@
-package entidades;
+package entidades.valueObjects;
 
 import java.time.LocalDate;
 

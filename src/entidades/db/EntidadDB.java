@@ -1,4 +1,4 @@
-package baseDeDatos;
+package entidades.db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
