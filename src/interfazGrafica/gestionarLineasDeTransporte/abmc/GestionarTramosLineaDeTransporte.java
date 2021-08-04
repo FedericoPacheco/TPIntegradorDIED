@@ -111,11 +111,9 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		tbl.getColumnModel().getColumn(1).setCellRenderer(centrarDatos);
 		// -----------------------------------
 		// https://stackoverflow.com/a/32942079
-		tbl.getSelectionModel().addListSelectionListener( // Activa los botones cuando se selecciona
-														  // una columna
+		tbl.getSelectionModel().addListSelectionListener( // Activa los botones cuando se selecciona una columna											  
 			e -> {	
-					if (!e.getValueIsAdjusting()) // Metodo magico que evita que el cuerpo
-												  // del if se ejecute dos veces
+					if (!e.getValueIsAdjusting()) // Metodo magico que evita que el cuerpo del if se ejecute dos veces						  
 					{
 						btnEliminar.setEnabled(true);
 						btnCompletarDatos.setEnabled(true);

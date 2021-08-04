@@ -1,6 +1,10 @@
 package interfazGrafica.gestionarLineasDeTransporte.abmc;
 
+import java.awt.Color;
 import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -15,6 +19,8 @@ public class AgregarLineaDeTransporte extends JPanel
 {
 	private RedDeTransporte redDeTransporte;
 	private GUIAgregarEntidadGenerico agregarLinea;
+	
+	private static String colorHex = "#FFFFFF";
 	
 	public AgregarLineaDeTransporte(JFrame ventana, JPanel panePadre, RedDeTransporte redDeTransporte)
 	{
@@ -33,7 +39,22 @@ public class AgregarLineaDeTransporte extends JPanel
 			.addEtiqueta("Estado");
 			
 		JTextField txtfNombre = new JTextField(25);
-		JTextField txtfColor = new JTextField(25);
+		
+		//https://stackoverflow.com/a/26565256
+		JButton btnSeleccionColor = new JButton("Seleccionar");
+		btnSeleccionColor.addActionListener(
+			e -> {
+					Color colorSeleccionado = JColorChooser.showDialog(null, "", Color.BLACK);
+					
+					if (colorSeleccionado != null)
+					{
+						colorHex = "#" + 
+									Integer.toHexString(colorSeleccionado.getRed()) + 
+									Integer.toHexString(colorSeleccionado.getGreen()) + 
+									Integer.toHexString(colorSeleccionado.getBlue());
+					}
+				 }
+		); 
 		
 		JComboBox<String> cbEstado = new JComboBox<String>();
 		cbEstado.addItem("Activa");
@@ -41,7 +62,8 @@ public class AgregarLineaDeTransporte extends JPanel
 		
 		agregarLinea
 			.addComponente(txtfNombre)
-			.addComponente(txtfColor)
+			//.addComponente(txtfColor)
+			.addComponente(btnSeleccionColor)
 			.addComponente(cbEstado);
 		
 		agregarLinea.setAccionAceptar(
@@ -54,7 +76,7 @@ public class AgregarLineaDeTransporte extends JPanel
 				
 					LineaDeTransporte linea = new LineaDeTransporte(				  
 						txtfNombre.getText(),
-						txtfColor.getText(),
+						colorHex,
 						estado
 					);
 					
@@ -65,7 +87,6 @@ public class AgregarLineaDeTransporte extends JPanel
 					}
 					
 					txtfNombre.setText("");
-					txtfColor.setText("");
 					cbEstado.setSelectedItem("Activa");
 				 }
 			);

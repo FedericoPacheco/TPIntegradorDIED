@@ -1,7 +1,11 @@
 package app;
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.SQLException;
+import java.util.Locale;
+
+import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -14,6 +18,7 @@ import tests.TestDB;
 // https://stackoverflow.com/questions/9093448/how-to-capture-a-jframes-close-button-click-event
 // https://stackoverflow.com/questions/30259812/can-we-use-the-lambda-expression-for-windowlistener-if-yes-how-if-no-why-can
 // https://stackoverflow.com/questions/2442599/how-to-set-jframe-to-appear-centered-regardless-of-monitor-resolution
+// https://stackoverflow.com/a/10019105
 
 @SuppressWarnings("unused")
 public final class App 
@@ -24,13 +29,11 @@ public final class App
 	public static void main (String[] args)
 	{
 		//TestDB.testear();
-		
+		///*
 		try { redDeTransporte = new RedDeTransporte(); } 
 		catch (ClassNotFoundException | SQLException e) { System.exit(137); }
 		
-		// Cambiar opciones de "Si" y "No" al espaniol
-		UIManager.put("OptionPane.yesButtonText", "Sí");
-		UIManager.put("OptionPane.noButtonText", "No");
+		cambiarIdiomaBotones();
 		ventana.addWindowListener
 		(
 			new WindowAdapter() 
@@ -52,8 +55,6 @@ public final class App
 						System.exit(0);
 					}
 		        }
-
-				
 		    }
 		);
 		ventana.setTitle("TP integrador - DIED - UTN FRSF"); 
@@ -62,11 +63,23 @@ public final class App
 		ventana.pack();
 		ventana.setLocationRelativeTo(null);
 		ventana.setVisible(true);
+		//*/
 	}
 	
 	private static void cerrarConexion()
 	{
 		try { redDeTransporte.close(); }
 		catch (SQLException e) { e.printStackTrace(); }
+	}
+	
+	private static void cambiarIdiomaBotones()
+	{
+		//Locale.setDefault(new Locale("es", "ES")); // No funciona :(
+		 
+		UIManager.put("OptionPane.yesButtonText", "Sí");
+		UIManager.put("OptionPane.noButtonText", "No");
+		UIManager.put("OptionPane.cancelButtonText", "Cancelar");
+		UIManager.put("OptionPane.okButtonText", "Aceptar");
+		//UIManager.put("OptionPane.resetButtonText", "Reiniciar");
 	}
 }
