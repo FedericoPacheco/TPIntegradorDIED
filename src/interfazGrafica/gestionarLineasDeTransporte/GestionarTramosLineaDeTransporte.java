@@ -24,18 +24,18 @@ import javax.swing.table.AbstractTableModel;
 import entidades.Estacion;
 import entidades.LineaDeTransporte;
 import entidades.Tramo;
-import entidades.Tramo.Estado;
 import grafo.RedDeTransporte;
+import interfazGrafica.utilidades.AgregarEntidad;
 
 // https://stackoverflow.com/questions/3179136/jtable-how-to-refresh-table-model-after-insert-delete-or-update-the-data
 
 @SuppressWarnings("serial")
 public class GestionarTramosLineaDeTransporte extends JPanel 
 {
-	private ModeloTablaTramos mtt;
+	private ModeloTablaTramos mt;
 	private JTable tbl;
-	private JScrollPane sp1;
-	private JComboBox<String> cb1, cb2, cb3;
+	private JScrollPane sp;
+	private JComboBox<String> cbLinea, cbOrigen, cbDestino;
 	private JButton btnAgregar, btnEliminar, btnAceptar, btnCompletarDatos;
 	private JLabel lbl1, lbl2, lbl3;
 	private GridBagConstraints gbc;
@@ -60,7 +60,6 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		this.padre = padre;
 		this.redDeTransporte = redDeTransporte;
 	
-		tramosLinea = null;
 		estacionesCb = new HashMap<String, Estacion>();
 		lineasCb = new HashMap<String, LineaDeTransporte>();
 		gbc = new GridBagConstraints();
@@ -70,39 +69,54 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 
 	private void armarPanel() 
 	{
-		cb1 = new JComboBox<String>();
-		cb2 = new JComboBox<String>();
-		cb3 = new JComboBox<String>();
+		cbLinea = new JComboBox<String>();
+		cbOrigen = new JComboBox<String>();
+		cbDestino = new JComboBox<String>();
 		
 		for (LineaDeTransporte l : redDeTransporte.getAllLineasDeTransporte())
 		{
 			lineasCb.put(l.getNombre() + " (id: " + l.getId() + ")", l);
-			cb1.addItem(l.getNombre() + " (id: " + l.getId() + ")");
+			cbLinea.addItem(l.getNombre() + " (id: " + l.getId() + ")");
 		}
 		
 		for (Estacion e : redDeTransporte.getAllEstaciones())
 		{
 			estacionesCb.put(e.getNombre() + " (id: " + e.getId() + ")", e);
-			cb2.addItem(e.getNombre() + " (id: " + e.getId() + ")");
-			cb3.addItem(e.getNombre() + " (id: " + e.getId() + ")");
+			cbOrigen.addItem(e.getNombre() + " (id: " + e.getId() + ")");
+			cbDestino.addItem(e.getNombre() + " (id: " + e.getId() + ")");
 		}
+	
+		tramosLinea = new ArrayList<Tramo>();
+		for (Integer idTramo : lineasCb.get(cbLinea.getSelectedItem()).getIdsTramos())
+			tramosLinea.add(redDeTransporte.getTramo(idTramo));
 		
-		tramosLinea = redDeTransporte.getAllTramos(lineasCb.get(cb1.getSelectedItem()));
 		
 		btnAgregar = new JButton("Agregar");
 		btnEliminar = new JButton("Eliminar");
 		btnAceptar = new JButton("Volver");
 		btnCompletarDatos = new JButton("Completar datos");
 		
-		lbl1 = new JLabel("Línea de transporte a completar: ");
+		lbl1 = new JLabel("Seleccione una línea de transporte: ");
 		lbl2 = new JLabel("Tramos");
-		
 		lbl3 = new JLabel(">>>");
 		
-		mtt = new ModeloTablaTramos();
-		tbl = new JTable(mtt);
-		sp1 = new JScrollPane(tbl);
-		mtt.setData(this.recuperarDatosEstacionesTramos());
+		mt = new ModeloTablaTramos();
+		tbl = new JTable(mt);
+		// https://stackoverflow.com/a/32942079
+		tbl.getSelectionModel().addListSelectionListener( // Activa los botones cuando se selecciona
+														  // una columna
+			e -> {	
+					if (!e.getValueIsAdjusting()) // Metodo magico que evita que el cuerpo
+												  // del if se ejecute dos veces
+					{
+						btnEliminar.setEnabled(true);
+						btnCompletarDatos.setEnabled(true);
+					}
+				 }
+		);
+		
+		sp = new JScrollPane(tbl);
+		mt.setData(this.recuperarDatosEstacionesTramos());
 		
 	
 		gbc.gridx = 0;
@@ -121,12 +135,18 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.ipady = 0;
-		this.add(cb1, gbc);
-		cb1.addActionListener(
+		this.add(cbLinea, gbc);
+		cbLinea.addActionListener(
 			e -> { 
-					tramosLinea = redDeTransporte.getAllTramos(lineasCb.get(cb1.getSelectedItem())); 
-					mtt.setData(this.recuperarDatosEstacionesTramos());
-					mtt.fireTableDataChanged();
+					tramosLinea = new ArrayList<Tramo>();
+					for (Integer idTramo : lineasCb.get(cbLinea.getSelectedItem()).getIdsTramos())
+						tramosLinea.add(redDeTransporte.getTramo(idTramo));
+				
+					mt.setData(this.recuperarDatosEstacionesTramos());
+					mt.fireTableDataChanged();
+					
+					btnEliminar.setEnabled(false);
+					btnCompletarDatos.setEnabled(false);
 				 } 
 		);
 		
@@ -147,11 +167,11 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.ipady = 0;
-		this.add(cb2, gbc);
+		this.add(cbOrigen, gbc);
 		ActionListener a = 
 			e -> {
-					String cb2I = (String) cb2.getSelectedItem();
-					String cb3I = (String) cb3.getSelectedItem();
+					String cb2I = (String) cbOrigen.getSelectedItem();
+					String cb3I = (String) cbDestino.getSelectedItem();
 					
 					// Controlar que un tramo no tenga de origen y destino la misma estacion,
 					// ni que haya tramos "repetidos"
@@ -162,7 +182,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 						btnAgregar.setEnabled(true);
 		 	     };
 		a.actionPerformed(null);
-		cb2.addActionListener(a);
+		cbOrigen.addActionListener(a);
 		
 		gbc.gridx = 1;
 		gbc.gridy = 2;
@@ -180,8 +200,8 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.ipady = 0;
-		this.add(cb3, gbc);
-		cb3.addActionListener(a);
+		this.add(cbDestino, gbc);
+		cbDestino.addActionListener(a);
 		
 		gbc.gridx = 3;
 		gbc.gridy = 2;
@@ -199,9 +219,9 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 						PASAJEROS_DFLT,
 						Tramo.Estado.INACTIVO,
 						COSTO_DFLT,
-						estacionesCb.get(cb2.getSelectedItem()).getId(),
-						estacionesCb.get(cb3.getSelectedItem()).getId(),
-						lineasCb.get(cb1.getSelectedItem()).getId()
+						estacionesCb.get(cbOrigen.getSelectedItem()).getId(),
+						estacionesCb.get(cbDestino.getSelectedItem()).getId(),
+						lineasCb.get(cbLinea.getSelectedItem()).getId()
 					);
 					
 					tramosLinea.add(auxTramo);
@@ -211,14 +231,14 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 						e1.printStackTrace();
 					}
 					
-					mtt.setData(this.recuperarDatosEstacionesTramos());
-					mtt.fireTableDataChanged();
-					btnEliminar.setEnabled(true);
-					btnCompletarDatos.setEnabled(true);
-					//btn1.setEnabled(false);
+					mt.setData(this.recuperarDatosEstacionesTramos());
+					mt.fireTableDataChanged();
+					btnEliminar.setEnabled(false);
+					btnCompletarDatos.setEnabled(false);
+	
 					// Hacer la estacion destino de un tramo el origen de la siguiente:
-					cb2.setSelectedItem(cb3.getSelectedItem());
-					cb3.setSelectedIndex((cb3.getSelectedIndex() + 1) % cb3.getItemCount());
+					cbOrigen.setSelectedItem(cbDestino.getSelectedItem());
+					cbDestino.setSelectedIndex((cbDestino.getSelectedIndex() + 1) % cbDestino.getItemCount());
 				 }
 		);
 		
@@ -229,10 +249,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.ipady = 15;
-		if (tramosLinea.isEmpty())
-			btnEliminar.setEnabled(false);
-		else
-			btnEliminar.setEnabled(true);
+		btnEliminar.setEnabled(false);
 		this.add(btnEliminar, gbc);
 		btnEliminar.addActionListener(
 			e -> {
@@ -255,11 +272,11 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 					
 					tramosLinea = nuevosTramos;
 					
-					mtt.setData(this.recuperarDatosEstacionesTramos());
-					mtt.fireTableDataChanged();
+					mt.setData(this.recuperarDatosEstacionesTramos());
+					mt.fireTableDataChanged();
 						
-					if (tramosLinea.isEmpty())
-						btnEliminar.setEnabled(false);
+					btnEliminar.setEnabled(false);
+					btnCompletarDatos.setEnabled(false);
 				 }
 		);
 		
@@ -270,18 +287,15 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		gbc.fill = GridBagConstraints.NONE;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.ipady = 15;
-		if (tramosLinea.isEmpty())
-			btnCompletarDatos.setEnabled(false);
-		else
-			btnCompletarDatos.setEnabled(true);
+		btnCompletarDatos.setEnabled(false);
 		this.add(btnCompletarDatos, gbc);
 		btnCompletarDatos.addActionListener(
 			e -> {
-					ventana.setContentPane(
-						new AgregarDatosTramo(tramosLinea.get(tbl.getSelectedRow()), this));
-					ventana.pack();
-					ventana.setVisible(true);		
-				 }
+					int[] filasSeleccionadas = tbl.getSelectedRows();
+					
+					for (int i = 0; i < filasSeleccionadas.length; i++)
+						new AgregarDatosTramo(tramosLinea.get(i));	
+				}
 		);
 		
 		gbc.gridx = 0;
@@ -291,7 +305,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.ipady = 0;
-		this.add(sp1, gbc);
+		this.add(sp, gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = 4;
@@ -347,178 +361,81 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		return false;
 	}
 	
-	class AgregarDatosTramo extends JPanel
+	private class AgregarDatosTramo extends JPanel
 	{
-		GridBagConstraints gbc;
-		JLabel lbl1, lbl2, lbl3, lbl4, lbl5, lbl6;
-		JTextField txtf1, txtf2, txtf3, txtf4;
-		JButton btn1, btn2;
-		JComboBox<String> cb4;
-		JPanel padre;
+		private Tramo tramo;
 		
-		Tramo tramo;
+		private AgregarEntidad agregarTramo;
 		
-		public AgregarDatosTramo(Tramo tramo, JPanel padre) 
+		public AgregarDatosTramo(Tramo tramo) 
 		{	
 			this.tramo = tramo;
-			this.padre = padre;
-			gbc = new GridBagConstraints();
-			this.setLayout(new GridBagLayout());
-			this.armarPanel();
+			
+			agregarTramo = new AgregarEntidad(
+					this, 
+					ventana,
+					redDeTransporte.getEstacion(tramo.getIdOrigen()).getNombre() + 
+					" (id: " + tramo.getIdOrigen() + ")  >>>  " + 
+					redDeTransporte.getEstacion(tramo.getIdDestino()).getNombre() + 
+					" (id: " + tramo.getIdDestino() + ")"
+			);
+			
+			this.completarComponentes();
+			agregarTramo.armar();
 		}
 		
-		private void armarPanel()
+		private void completarComponentes()
 		{
-			lbl1 = new JLabel(
-				redDeTransporte.getEstacion(tramo.getIdOrigen()).getNombre() + " (id: " + tramo.getIdOrigen() + ")  >>>  " + 
-				redDeTransporte.getEstacion(tramo.getIdDestino()).getNombre() + " (id: " + tramo.getIdDestino() + ")"
-			);
-			lbl2 = new JLabel("Distancia [km]");
-			lbl3 = new JLabel("Duración del viaje [min]");
-			lbl4 = new JLabel("Cantidad máxima de pasajeros");
-			lbl5 = new JLabel("Estado");
-			lbl6 = new JLabel("Costo [$]");
-		
-			btn1 = new JButton("Aceptar");
-			btn2 = new JButton("Volver");
+			agregarTramo
+				.addEtiqueta("Distancia [km]")
+				.addEtiqueta("Duración del viaje [min]")
+				.addEtiqueta("Cantidad máxima de pasajeros")
+				.addEtiqueta("Estado")
+				.addEtiqueta("Costo [$]");
+				
 			
-			txtf1 = new JTextField(
+			JTextField txtfDistancia = new JTextField(
 				tramo.getDistanciaEnKm().equals(DISTANCIA_DFLT)? "" : tramo.getDistanciaEnKm().toString(),
 				25
 			);
-			txtf2 = new JTextField(
+			JTextField txtfDuracion = new JTextField(
 				tramo.getDuracionViajeEnMin().equals(DURACION_DFLT)? "" : tramo.getDuracionViajeEnMin().toString(), 
 				25
 			);
-			txtf3 = new JTextField(
+			JTextField txtfPasajeros = new JTextField(
 				tramo.getCantidadMaximaPasajeros().equals(PASAJEROS_DFLT)? "" : tramo.getCantidadMaximaPasajeros().toString(), 
 				25
 			);
-			txtf4 = new JTextField(
+			JTextField txtfCosto = new JTextField(
 				tramo.getCosto().equals(COSTO_DFLT)? "" : tramo.getCosto().toString(), 
 				25
 			);
 			
-			cb4 = new JComboBox<String>();
-			cb4.addItem("Activo");
-			cb4.addItem("Inactivo");
+			JComboBox<String> cbEstado = new JComboBox<String>();
+			cbEstado.addItem("Activo");
+			cbEstado.addItem("Inactivo");
 			if(redDeTransporte.getLineaDeTransporte(tramo.getIdLineaDeTransporte()).getEstado() == LineaDeTransporte.Estado.INACTIVA)
 			{
-				cb4.setSelectedItem("Inactivo");
-				cb4.setEnabled(false);
+				cbEstado.setSelectedItem("Inactivo");
+				cbEstado.setEnabled(false);
 			}
 			else
-				cb4.setSelectedItem((tramo.getEstado() == Tramo.Estado.ACTIVO)? "Activo" : "Inactivo");
+				cbEstado.setSelectedItem((tramo.getEstado() == Tramo.Estado.ACTIVO)? "Activo" : "Inactivo");
 			
-			gbc.gridx = 0;
-			gbc.gridy = 0;
-			gbc.gridwidth = 2;
-			gbc.weightx = 1.0;
-			gbc.fill = GridBagConstraints.CENTER;
-			gbc.insets = new Insets(10, 5, 5, 5);
-			this.add(lbl1, gbc);
 			
-			gbc.gridx = 0;
-			gbc.gridy = 1;
-			gbc.gridwidth = 1;
-			gbc.weightx = 0.25;
-			gbc.fill = GridBagConstraints.NONE;
-			gbc.insets = new Insets(10, 5, 5, 5);
-			this.add(lbl2, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 1;
-			gbc.gridwidth = 2;
-			gbc.weightx = 0.75;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(10, 5, 5, 5);
-			this.add(txtf1, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 2;
-			gbc.gridwidth = 1;
-			gbc.weightx = 0.25;
-			gbc.fill = GridBagConstraints.NONE;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			this.add(lbl3, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 2;
-			gbc.gridwidth = 2;
-			gbc.weightx = 0.75;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			this.add(txtf2, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 3;
-			gbc.gridwidth = 1;
-			gbc.weightx = 0.25;
-			gbc.fill = GridBagConstraints.NONE;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			this.add(lbl4, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 3;
-			gbc.gridwidth = 2;
-			gbc.weightx = 0.75;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			this.add(txtf3, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 4;
-			gbc.gridwidth = 1;
-			gbc.weightx = 0.25;
-			gbc.fill = GridBagConstraints.NONE;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			this.add(lbl5, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 4;
-			gbc.gridwidth = 2;
-			gbc.weightx = 0.75;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(5, 5, 5, 5);
-			this.add(cb4, gbc);
-			
-			gbc.gridx = 0;
-			gbc.gridy = 5;
-			gbc.gridwidth = 1;
-			gbc.weightx = 0.25;
-			gbc.fill = GridBagConstraints.NONE;
-			gbc.insets = new Insets(10, 5, 5, 5);
-			this.add(lbl6, gbc);
-			
-			gbc.gridx = 1;
-			gbc.gridy = 5;
-			gbc.gridwidth = 2;
-			gbc.weightx = 0.75;
-			gbc.fill = GridBagConstraints.HORIZONTAL;
-			gbc.insets = new Insets(10, 5, 5, 5);
-			this.add(txtf4, gbc);
-			
-			gbc.gridx = 2;
-			gbc.gridy = 6;
-			gbc.gridwidth = 1;
-			gbc.weightx = 0.0;
-			gbc.fill = GridBagConstraints.WEST;
-			gbc.ipady = 15;
-			gbc.insets = new Insets(30, 20, 10, 20);
-			this.add(btn1, gbc);
-			btn1.addActionListener(
+			agregarTramo.setAccionAceptar(
 				e -> {
 						Tramo.Estado estado;
-						if (((String) cb4.getSelectedItem()).equals("Activo")) 
+						if (((String) cbEstado.getSelectedItem()).equals("Activo")) 
 							estado = Tramo.Estado.ACTIVO;
 						else	
 							estado = Tramo.Estado.INACTIVO;
 						
-						tramo.setDistanciaEnKm(Double.parseDouble(txtf1.getText()));
-						tramo.setDuracionViajeEnMin(Integer.parseInt(txtf2.getText()));
-						tramo.setCantidadMaximaPasajeros(Integer.parseInt(txtf3.getText()));
+						tramo.setDistanciaEnKm(Double.parseDouble(txtfDistancia.getText()));
+						tramo.setDuracionViajeEnMin(Integer.parseInt(txtfDuracion.getText()));
+						tramo.setCantidadMaximaPasajeros(Integer.parseInt(txtfPasajeros.getText()));
 						tramo.setEstado(estado);
-						tramo.setCosto(Double.parseDouble(txtf4.getText()));
+						tramo.setCosto(Double.parseDouble(txtfCosto.getText()));
 					
 						try {
 							redDeTransporte.updateTramo(tramo);
@@ -526,27 +443,17 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 							e1.printStackTrace();
 						}
 						
-						ventana.setContentPane(padre);
-						ventana.pack();
-						ventana.setVisible(true);
+						lineasCb.get(cbLinea.getSelectedItem()).addIdTramo(tramo.getId());;
 					 }			
 			);  
 			
-			gbc.gridx = 1;
-			gbc.gridy = 6;
-			gbc.gridwidth = 1;
-			gbc.weightx = 0.0;
-			gbc.fill = GridBagConstraints.EAST;
-			gbc.ipady = 15;
-			gbc.insets = new Insets(30, 20, 10, 20);
-			this.add(btn2, gbc);
-			btn2.addActionListener(
-				e -> {
-						ventana.setContentPane(padre);
-						ventana.pack();
-						ventana.setVisible(true);
-					 }
-			);
+
+			agregarTramo
+				.addComponente(txtfDistancia)
+				.addComponente(txtfDuracion)
+				.addComponente(txtfPasajeros)
+				.addComponente(cbEstado)
+				.addComponente(txtfCosto);
 		}
 	}
 	

@@ -2,7 +2,6 @@ package grafo;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 import org.apache.commons.collections.buffer.PriorityBuffer;
@@ -158,6 +156,7 @@ public class RedDeTransporte             // i.e. un digrafo
 	public List<LineaDeTransporte> getAllLineasDeTransporte() 			{ return new ArrayList<LineaDeTransporte>(lineasDeTransporte);	 		}
 	public List<Boleto> getAllBoletos() 								{ return new ArrayList<Boleto>(boletos);								}
 	
+	/*
 	public List<Tramo> getAllTramos(LineaDeTransporte linea)
 	{
 		List<Tramo> tramosLinea = new ArrayList<Tramo>();
@@ -167,6 +166,15 @@ public class RedDeTransporte             // i.e. un digrafo
 				tramosLinea.add(t);
 		
 		return tramosLinea;
+	}
+	*/
+	
+	public Tramo getTramo(Integer idTramo) 
+	{
+		for (Tramo t: tramos)
+			if (t.getId().equals(idTramo))
+				return t;
+		return null;
 	}
 	
 	public TareaDeMantenimiento getTareaDeMantenimiento(Integer idMantenimiento) 
