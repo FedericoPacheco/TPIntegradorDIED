@@ -20,7 +20,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import entidades.Estacion;
 import grafo.Dupla;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.ModeloTablaSoloLectura;
+import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")
 public class EstacionRank extends JPanel 
@@ -28,7 +28,7 @@ public class EstacionRank extends JPanel
 	private static final Double FACTOR_AMORTIGUACION = 0.15;
 	private static final Double ERROR = 1.0 / 1000;
 	
-	private ModeloTablaSoloLectura mTbl;
+	private ModeloTablaGenerico mTbl;
 	private JTable tbl;
 	private JScrollPane sp;
 	private JButton btnVolver;
@@ -54,7 +54,7 @@ public class EstacionRank extends JPanel
 	
 	private void armarPanel() 
 	{
-		mTbl = new ModeloTablaSoloLectura(); 
+		mTbl = new ModeloTablaGenerico(); 
 		mTbl.addColumna("Id").addColumna("Estación").addColumna("EstaciónRank");
 		mTbl.setDatos(this.recuperarDatos());
 		tbl = new JTable(mTbl);

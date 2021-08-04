@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarLineasDeTransporte;
+package interfazGrafica.gestionarLineasDeTransporte.abmc;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -19,20 +19,21 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import entidades.Estacion;
 import entidades.LineaDeTransporte;
 import entidades.Tramo;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidad;
+import interfazGrafica.utilidades.AgregarEntidadGenerico;
+import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 // https://stackoverflow.com/questions/3179136/jtable-how-to-refresh-table-model-after-insert-delete-or-update-the-data
 
 @SuppressWarnings("serial")
 public class GestionarTramosLineaDeTransporte extends JPanel 
 {
-	private ModeloTablaTramos mt;
+	private ModeloTablaGenerico mt;
 	private JTable tbl;
 	private JScrollPane sp;
 	private JComboBox<String> cbLinea, cbOrigen, cbDestino;
@@ -100,8 +101,15 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		lbl2 = new JLabel("Tramos");
 		lbl3 = new JLabel(">>>");
 		
-		mt = new ModeloTablaTramos();
+		mt = new ModeloTablaGenerico();
+		mt.addColumna("Estación origen").addColumna("Estación destino");
 		tbl = new JTable(mt);
+		// https://stackoverflow.com/a/7433758
+		DefaultTableCellRenderer centrarDatos = new DefaultTableCellRenderer();
+		centrarDatos.setHorizontalAlignment(JLabel.CENTER);
+		tbl.getColumnModel().getColumn(0).setCellRenderer(centrarDatos);
+		tbl.getColumnModel().getColumn(1).setCellRenderer(centrarDatos);
+		// -----------------------------------
 		// https://stackoverflow.com/a/32942079
 		tbl.getSelectionModel().addListSelectionListener( // Activa los botones cuando se selecciona
 														  // una columna
@@ -116,7 +124,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		);
 		
 		sp = new JScrollPane(tbl);
-		mt.setData(this.recuperarDatosEstacionesTramos());
+		mt.setDatos(this.recuperarDatosEstacionesTramos());
 		
 	
 		gbc.gridx = 0;
@@ -142,7 +150,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 					for (Integer idTramo : lineasCb.get(cbLinea.getSelectedItem()).getIdsTramos())
 						tramosLinea.add(redDeTransporte.getTramo(idTramo));
 				
-					mt.setData(this.recuperarDatosEstacionesTramos());
+					mt.setDatos(this.recuperarDatosEstacionesTramos());
 					mt.fireTableDataChanged();
 					
 					btnEliminar.setEnabled(false);
@@ -231,7 +239,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 						e1.printStackTrace();
 					}
 					
-					mt.setData(this.recuperarDatosEstacionesTramos());
+					mt.setDatos(this.recuperarDatosEstacionesTramos());
 					mt.fireTableDataChanged();
 					btnEliminar.setEnabled(false);
 					btnCompletarDatos.setEnabled(false);
@@ -272,7 +280,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 					
 					tramosLinea = nuevosTramos;
 					
-					mt.setData(this.recuperarDatosEstacionesTramos());
+					mt.setDatos(this.recuperarDatosEstacionesTramos());
 					mt.fireTableDataChanged();
 						
 					btnEliminar.setEnabled(false);
@@ -365,13 +373,13 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 	{
 		private Tramo tramo;
 		
-		private AgregarEntidad agregarTramo;
+		private AgregarEntidadGenerico agregarTramo;
 		
 		public AgregarDatosTramo(Tramo tramo) 
 		{	
 			this.tramo = tramo;
 			
-			agregarTramo = new AgregarEntidad(
+			agregarTramo = new AgregarEntidadGenerico(
 					this, 
 					ventana,
 					redDeTransporte.getEstacion(tramo.getIdOrigen()).getNombre() + 
@@ -456,23 +464,4 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 				.addComponente(txtfCosto);
 		}
 	}
-	
-	class ModeloTablaTramos extends AbstractTableModel
-	{
-		private String[] nombreColumnas = {"Origen", "Destino"};
-		private Object[][] datos = {{"", ""}};
-		 
-		public void setData(Object[][] datos) 			{ this.datos = datos; 					}
-		public int getColumnCount() 					{ return nombreColumnas.length; 		}
-		public int getRowCount() 						{ return datos.length; 					}
-		public String getColumnName(int col) 			{ return nombreColumnas[col]; 			}
-		public Object getValueAt(int row, int col) 		{ return datos[row][col]; 				}
-		public Class getColumnClass(int c) 				{ return getValueAt(0, c).getClass(); 	}
-		public boolean isCellEditable(int row, int col) { return false;							}
-		public void setValueAt(Object value, int row, int col) 	
-		{
-		    datos[row][col] = value;
-		    fireTableCellUpdated(row, col);
-		}
-	 }
 }

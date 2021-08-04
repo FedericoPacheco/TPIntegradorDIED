@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarEstaciones;
+package interfazGrafica.gestionarEstaciones.abmc;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -14,47 +14,30 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 
 import entidades.Estacion;
 import entidades.TareaDeMantenimiento;
 import grafo.RedDeTransporte;
+import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 // https://stackoverflow.com/questions/3029079/how-to-disable-main-jframe-when-open-new-jframe
 // https://stackoverflow.com/questions/29807260/how-to-close-current-jframe
 
 @SuppressWarnings("serial")
 public class ConsultarYModificarEstaciones extends JPanel implements TableModelListener
-{
-	class ModeloTablaEstaciones extends AbstractTableModel
-	{
-		private String[] nombreColumnas = {"Id", "Nombre", "Horario de apertura", "Horario de cierre", "Estado"};
-		private Object[][] datos = { {"", "", "", "", ""} };
-		 
-		public void setData(Object[][] datos) 			{ this.datos = datos; 					}
-		public int getColumnCount() 					{ return nombreColumnas.length; 		}
-		public int getRowCount() 						{ return datos.length; 					}
-		public String getColumnName(int col) 			{ return nombreColumnas[col]; 			}
-		public Object getValueAt(int row, int col) 		{ return datos[row][col]; 				}
-		public Class getColumnClass(int c) 				{ return getValueAt(0, c).getClass(); 	}
-		public boolean isCellEditable(int row, int col) { return (col > 0)? true : false;		}
-		public void setValueAt(Object value, int row, int col) 	
-		{
-		    datos[row][col] = value;
-		    fireTableCellUpdated(row, col);
-		}
-	 }
-	
+{	
 	private GridBagConstraints gbc;
 	private JButton btn1;
-	private JTable tabla;
-	private ModeloTablaEstaciones modeloTabla;
+	private JTable tbl;
+	private ModeloTablaGenerico mTbl;
 	private JScrollPane sp;
 	private JFrame ventana;
 	private JPanel padre;
@@ -62,18 +45,17 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 	
 	private DateTimeFormatter formatoHora;
 	private List<Estacion> estaciones;
-	private Object[][] datos;
 	private RedDeTransporte redDeTransporte;
 
 	public ConsultarYModificarEstaciones(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte)
 	{
 		formatoHora = DateTimeFormatter.ofPattern("HH:mm");
 		estaciones = redDeTransporte.getAllEstaciones();
-		datos = new Object[estaciones.size()][5];
 		
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
 		this.padre = padre;
+		
 	    this.setLayout(new GridBagLayout());
 	    gbc = new GridBagConstraints();
 	    this.armarPanel();
@@ -81,30 +63,39 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 	
 	private void armarPanel()
 	{
-		btn1 = new JButton("Volver");
-		estado = new JComboBox<String>();
-		modeloTabla = new ModeloTablaEstaciones();
-		tabla = new JTable(modeloTabla);
-	    sp = new JScrollPane(tabla);
+		mTbl = new ModeloTablaGenerico();
+		mTbl.addColumna("Id").addColumna("Nombre").addColumna("Horario de apertura")
+			.addColumna("Horario de cierre").addColumna("Estado");
+		mTbl.setDatos(this.recuperarDatos());
+		mTbl.setIsCellEditable((row, col) -> (col > 0)? true : false);
+		tbl = new JTable(mTbl);
+		// https://stackoverflow.com/a/7433758
+		DefaultTableCellRenderer centrarDatos = new DefaultTableCellRenderer();
+		centrarDatos.setHorizontalAlignment(JLabel.CENTER);
+		tbl.getColumnModel().getColumn(0).setCellRenderer(centrarDatos);
+		tbl.getColumnModel().getColumn(1).setCellRenderer(centrarDatos);
+		tbl.getColumnModel().getColumn(2).setCellRenderer(centrarDatos);
+		tbl.getColumnModel().getColumn(3).setCellRenderer(centrarDatos);
+		tbl.getColumnModel().getColumn(4).setCellRenderer(centrarDatos);
+		// -----------------------------------
+	    sp = new JScrollPane(tbl);
 		
+	    estado = new JComboBox<String>();
 		estado.addItem("Operativa");
 		estado.addItem("En mantenimiento");
 		
-		tabla.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(estado));
-		tabla.setPreferredScrollableViewportSize(new Dimension(600, 200));
-	    tabla.getModel().addTableModelListener(this);
-	    tabla.getColumnModel().getColumn(0).setPreferredWidth(20);
-	    tabla.getColumnModel().getColumn(4).setPreferredWidth(120);
-	
-	    this.recuperarDatos();
-	    modeloTabla.setData(datos);
-	
+		tbl.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(estado));
+		tbl.setPreferredScrollableViewportSize(new Dimension(600, 200));
+	    tbl.getModel().addTableModelListener(this);
+	    tbl.getColumnModel().getColumn(0).setPreferredWidth(20);
+	    tbl.getColumnModel().getColumn(4).setPreferredWidth(120);
 	    gbc.gridx = 0;
 		gbc.gridy = 0;
 		gbc.weightx = 1.0;
 		gbc.ipady = 0;
 		this.add(sp, gbc);
 		
+		btn1 = new JButton("Volver");
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.weightx = 0.0;
@@ -168,9 +159,10 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 		}
 	}
 	
-	public void recuperarDatos()
+	public Object[][] recuperarDatos()
 	{
-		for (Integer i = 0; i < estaciones.size(); i++)
+		Object[][] datos = new Object[estaciones.size()][5];
+		for (int i = 0; i < estaciones.size(); i++)
 		{
 			datos[i][0] = estaciones.get(i).getId();
 			datos[i][1] = estaciones.get(i).getNombre();
@@ -178,6 +170,8 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 			datos[i][3] = estaciones.get(i).getHoraCierre().toString();
 			datos[i][4] = (estaciones.get(i).getEstado() == Estacion.Estado.OPERATIVA)? "Operativa" : "En Mantenimiento";
 		}
+		
+		return datos;
 	}
 	
 	public void finalizarTareaDeMantenimiento(Estacion estacion) throws ClassNotFoundException, SQLException 

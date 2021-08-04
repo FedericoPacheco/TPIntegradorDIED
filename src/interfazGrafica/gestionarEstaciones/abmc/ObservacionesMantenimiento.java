@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarEstaciones;
+package interfazGrafica.gestionarEstaciones.abmc;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

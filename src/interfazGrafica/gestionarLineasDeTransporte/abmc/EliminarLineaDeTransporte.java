@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarEstaciones;
+package interfazGrafica.gestionarLineasDeTransporte.abmc;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,11 +13,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import entidades.Estacion;
+import entidades.LineaDeTransporte;
 import grafo.RedDeTransporte;
 
 @SuppressWarnings("serial")
-public class EliminarEstacion extends JPanel 
+public class EliminarLineaDeTransporte extends JPanel 
 {
 	private JFrame ventana;
 	private JPanel padre;
@@ -26,12 +26,12 @@ public class EliminarEstacion extends JPanel
 	private JButton btn1, btn2;
 	private JLabel lbl1;
 	
-	Map<String, Estacion> estacionesCb;
+	Map<String, LineaDeTransporte> lineasDeTransporteCb;
 	private RedDeTransporte redDeTransporte;
 	
-	public EliminarEstacion(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte)
+	public EliminarLineaDeTransporte(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte)
 	{
-		estacionesCb = new HashMap<String, Estacion>();
+		lineasDeTransporteCb = new HashMap<String, LineaDeTransporte>();
 		
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
@@ -45,13 +45,13 @@ public class EliminarEstacion extends JPanel
 	{
 		btn1 = new JButton("Eliminar");
 		btn2 = new JButton("Volver");
-		lbl1 = new JLabel("Seleccione la estación que desea eliminar: ");
+		lbl1 = new JLabel("Seleccione la línea de transporte que desea eliminar: ");
 		cb = new JComboBox<String>();
 	
-		for (Estacion e : redDeTransporte.getAllEstaciones())
+		for (LineaDeTransporte l : redDeTransporte.getAllLineasDeTransporte())
 		{
-			estacionesCb.put(e.getNombre() + " (id: " + e.getId() + ")", e);
-			cb.addItem(e.getNombre() + " (id: " + e.getId() + ")");
+			lineasDeTransporteCb.put(l.getNombre() + " (id: " + l.getId() + ")", l);
+			cb.addItem(l.getNombre() + " (id: " + l.getId() + ")");
 		}
 		
 		if(cb.getItemCount() == 0)
@@ -93,12 +93,12 @@ public class EliminarEstacion extends JPanel
 			e -> {
 					if (cb.getItemCount() > 0)
 					{
-						Estacion auxEstacion = estacionesCb.get(cb.getSelectedItem());
+						LineaDeTransporte auxLineaDeTransporte = lineasDeTransporteCb.get(cb.getSelectedItem());
 						cb.removeItem(cb.getSelectedItem());
 						
 						try {
-							if (auxEstacion != null) 
-								redDeTransporte.deleteEstacion(auxEstacion);
+							if (auxLineaDeTransporte != null) 
+								redDeTransporte.deleteLineaDeTransporte(auxLineaDeTransporte);
 						} catch (ClassNotFoundException | SQLException e1) {
 							e1.printStackTrace();
 						}
@@ -130,4 +130,3 @@ public class EliminarEstacion extends JPanel
 		);
 	}
 }
-

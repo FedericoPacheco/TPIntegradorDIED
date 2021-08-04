@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarEstaciones;
+package interfazGrafica.gestionarEstaciones.abmc;
 
 import java.sql.SQLException;
 import java.time.LocalTime;
@@ -11,7 +11,7 @@ import javax.swing.JTextField;
 
 import entidades.Estacion;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidad;
+import interfazGrafica.utilidades.AgregarEntidadGenerico;
 
 @SuppressWarnings("serial")
 public class AgregarEstacion extends JPanel
@@ -19,14 +19,14 @@ public class AgregarEstacion extends JPanel
 	private JFrame ventana;
 	
 	private RedDeTransporte redDeTransporte;
-	private AgregarEntidad agregarEstacion;
+	private AgregarEntidadGenerico agregarEstacion;
 	
 	public AgregarEstacion(JFrame ventana, JPanel panelPadre, RedDeTransporte redDeTransporte)
 	{
 		this.redDeTransporte = redDeTransporte;
 		this.ventana = ventana;
 		
-		agregarEstacion = new AgregarEntidad(ventana, this, panelPadre);
+		agregarEstacion = new AgregarEntidadGenerico(ventana, this, panelPadre);
 		
 		this.completarComponentes();
 		agregarEstacion.armar();

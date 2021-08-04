@@ -2,23 +2,26 @@ package interfazGrafica.utilidades;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 import javax.swing.table.AbstractTableModel;
 
 @SuppressWarnings("serial")
-public class ModeloTablaSoloLectura extends AbstractTableModel
+public class ModeloTablaGenerico extends AbstractTableModel
 {
 	private List<String> nombresColumnas;
 	private Object[][] datos;
-	 
-	public ModeloTablaSoloLectura()
+	private BiFunction<Integer, Integer, Boolean> isCellEditable;
+	
+	public ModeloTablaGenerico()
 	{
 		super();
 		nombresColumnas = new ArrayList<String>();
 		datos = null;
+		isCellEditable = (row, col) -> false;
 	}
 	
-	public ModeloTablaSoloLectura(List<String> nombresColumnas, Object[][] datos)
+	public ModeloTablaGenerico(List<String> nombresColumnas, Object[][] datos, BiFunction<Integer, Integer, Boolean> isCellEditable)
 	{
 		super();
 		this.nombresColumnas = nombresColumnas;
@@ -31,14 +34,14 @@ public class ModeloTablaSoloLectura extends AbstractTableModel
 	public String getColumnName(int col) 					{ return nombresColumnas.get(col);		}
 	public Object getValueAt(int row, int col) 				{ return datos[row][col]; 				}
 	public Class<? extends Object> getColumnClass(int c) 	{ return getValueAt(0, c).getClass(); 	}
-	public boolean isCellEditable(int row, int col) 		{ return false;							}
+	public boolean isCellEditable(int row, int col) 		{ return (boolean) isCellEditable.apply(Integer.valueOf(row), Integer.valueOf(col)); }
 	public void setValueAt(Object value, int row, int col) 	
 	{
 	    datos[row][col] = value;
 	    fireTableCellUpdated(row, col);
 	}
 	
-	public ModeloTablaSoloLectura addColumna(String nombreColumna) {
+	public ModeloTablaGenerico addColumna(String nombreColumna) {
 		nombresColumnas.add(nombreColumna);
 		
 		datos = new Object[1][nombresColumnas.size()];
@@ -48,11 +51,18 @@ public class ModeloTablaSoloLectura extends AbstractTableModel
 		return this;
 	}
 
-	public void setNombresColumnas(List<String> nombresColumnas) {
+	public ModeloTablaGenerico setNombresColumnas(List<String> nombresColumnas) {
 		this.nombresColumnas = nombresColumnas;
+		return this;
 	}
 
-	public void setDatos(Object[][] datos) {
+	public ModeloTablaGenerico setDatos(Object[][] datos) {
 		this.datos = datos;
+		return this;
+	}
+	
+	public ModeloTablaGenerico setIsCellEditable(BiFunction<Integer, Integer, Boolean> isCellEditable) {
+		this.isCellEditable = isCellEditable;
+		return this;
 	}
  }

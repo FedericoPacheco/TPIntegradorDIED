@@ -19,7 +19,7 @@ import entidades.Estacion;
 import entidades.Tramo;
 import grafo.DuplaCostoCamino;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidad;
+import interfazGrafica.utilidades.AgregarEntidadGenerico;
 
 @SuppressWarnings("serial")
 public class VentaDeBoleto extends JPanel 
@@ -28,7 +28,7 @@ public class VentaDeBoleto extends JPanel
 	private JPanel padre;
 	
 	private RedDeTransporte redDeTransporte;
-	private AgregarEntidad agregarBoleto;
+	private AgregarEntidadGenerico agregarBoleto;
 	private Map<String, Estacion> estacionCb;
 	
 	public VentaDeBoleto(JFrame ventana, JPanel panelPadre, RedDeTransporte redDeTransporte)
@@ -37,7 +37,7 @@ public class VentaDeBoleto extends JPanel
 		this.ventana = ventana;
 		this.padre = panelPadre;
 		
-		agregarBoleto = new AgregarEntidad(ventana, this, panelPadre);
+		agregarBoleto = new AgregarEntidadGenerico(ventana, this, panelPadre);
 		estacionCb = new HashMap<String, Estacion>();
 		
 		this.completarComponentes();

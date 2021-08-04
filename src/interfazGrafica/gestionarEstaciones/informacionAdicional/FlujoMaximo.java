@@ -22,12 +22,12 @@ import entidades.Estacion;
 import entidades.Tramo;
 import grafo.Dupla;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.ModeloTablaSoloLectura;
+import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")
 public class FlujoMaximo extends JPanel 
 {
-	private ModeloTablaSoloLectura mTbl;
+	private ModeloTablaGenerico mTbl;
 	private JTable tbl;
 	private JScrollPane sp;
 	private JComboBox<String> cbOrigen, cbDestino;
@@ -97,7 +97,7 @@ public class FlujoMaximo extends JPanel
 		}
 		
 		
-		mTbl = new ModeloTablaSoloLectura(); 
+		mTbl = new ModeloTablaGenerico(); 
 		mTbl.addColumna("Camino").addColumna("Flujo máximo");
 		tbl = new JTable(mTbl);
 		// https://stackoverflow.com/a/7433758

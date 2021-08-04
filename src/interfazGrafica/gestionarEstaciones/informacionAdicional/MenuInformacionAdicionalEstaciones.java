@@ -5,24 +5,22 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.Menu;
+import interfazGrafica.utilidades.MenuGenerico;
 
 @SuppressWarnings("serial")
 public class MenuInformacionAdicionalEstaciones extends JPanel
 {
 	private JFrame ventana;
-	private JPanel panelPadre;
-	private Menu menu;
+	private MenuGenerico menu;
 	
 	private RedDeTransporte redDeTransporte;
 	
 	public MenuInformacionAdicionalEstaciones(JFrame ventana, JPanel panelPadre, RedDeTransporte redDeTransporte) 
 	{
 		this.ventana = ventana;
-		this.panelPadre = panelPadre;
 		this.redDeTransporte = redDeTransporte;
 		
-		menu = new Menu(ventana, this, panelPadre);
+		menu = new MenuGenerico(ventana, this, panelPadre);
 		
 		this.completarComponentes();
 		menu.armar();

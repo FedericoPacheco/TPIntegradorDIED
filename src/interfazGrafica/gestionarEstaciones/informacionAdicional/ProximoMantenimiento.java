@@ -4,11 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,14 +14,13 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import entidades.Estacion;
-import grafo.Dupla;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.ModeloTablaSoloLectura;
+import interfazGrafica.utilidades.ModeloTablaGenerico;
 
 @SuppressWarnings("serial")
 public class ProximoMantenimiento extends JPanel 
 {
-	private ModeloTablaSoloLectura mTbl;
+	private ModeloTablaGenerico mTbl;
 	private JTable tbl;
 	private JScrollPane sp;
 	private JButton btnVolver;
@@ -51,7 +46,7 @@ public class ProximoMantenimiento extends JPanel
 	
 	private void armarPanel() 
 	{
-		mTbl = new ModeloTablaSoloLectura(); 
+		mTbl = new ModeloTablaGenerico(); 
 		mTbl.addColumna("Id").addColumna("Estación");
 		mTbl.setDatos(this.recuperarDatos());
 		tbl = new JTable(mTbl);

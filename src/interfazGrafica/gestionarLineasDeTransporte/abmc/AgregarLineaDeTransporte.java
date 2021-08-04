@@ -1,4 +1,4 @@
-package interfazGrafica.gestionarLineasDeTransporte;
+package interfazGrafica.gestionarLineasDeTransporte.abmc;
 
 import java.sql.SQLException;
 import javax.swing.JComboBox;
@@ -8,18 +8,18 @@ import javax.swing.JTextField;
 
 import entidades.LineaDeTransporte;
 import grafo.RedDeTransporte;
-import interfazGrafica.utilidades.AgregarEntidad;
+import interfazGrafica.utilidades.AgregarEntidadGenerico;
 
 @SuppressWarnings("serial")
 public class AgregarLineaDeTransporte extends JPanel
 {
 	private RedDeTransporte redDeTransporte;
-	private AgregarEntidad agregarLinea;
+	private AgregarEntidadGenerico agregarLinea;
 	
 	public AgregarLineaDeTransporte(JFrame ventana, JPanel panePadre, RedDeTransporte redDeTransporte)
 	{
 		this.redDeTransporte = redDeTransporte;
-		agregarLinea = new AgregarEntidad(ventana, this, panePadre);
+		agregarLinea = new AgregarEntidadGenerico(ventana, this, panePadre);
 		
 		this.completarComponentes();
 		agregarLinea.armar();
