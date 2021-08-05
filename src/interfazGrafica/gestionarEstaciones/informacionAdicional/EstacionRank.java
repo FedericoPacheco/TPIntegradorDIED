@@ -4,8 +4,8 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +55,7 @@ public class EstacionRank extends JPanel
 	private void armarPanel() 
 	{
 		mTbl = new ModeloTablaGenerico(); 
-		mTbl.addColumna("Id").addColumna("Estación").addColumna("EstaciónRank");
+		mTbl.addColumna("Id").addColumna("Estación").addColumna("Estación-rank");
 		mTbl.setDatos(this.recuperarDatos());
 		tbl = new JTable(mTbl);
 		// https://stackoverflow.com/a/7433758
@@ -115,9 +115,10 @@ public class EstacionRank extends JPanel
 		return datos;
 	}
 
+	// https://www.geeksforgeeks.org/iterate-map-java/
 	private void ordenarPorEstacionRank(Map<Estacion, Double> estacionesRank) 
 	{
-		estacionesRankOrdenado = new LinkedList<Dupla<Estacion, Double>>();
+		estacionesRankOrdenado = new ArrayList<Dupla<Estacion, Double>>();
 		
 		for (Map.Entry<Estacion, Double> pr : estacionesRank.entrySet())
 			estacionesRankOrdenado.add(new Dupla<Estacion, Double>(pr.getKey(), pr.getValue()));

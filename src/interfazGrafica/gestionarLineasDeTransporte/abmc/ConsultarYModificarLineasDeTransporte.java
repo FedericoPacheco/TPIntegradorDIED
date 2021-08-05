@@ -32,6 +32,8 @@ import grafo.RedDeTransporte;
 @SuppressWarnings("serial")
 public class ConsultarYModificarLineasDeTransporte extends JPanel implements TableModelListener
 {
+	private static final int COLUMNA_COLOR = 2;
+	
 	private GridBagConstraints gbc;
 	private JButton btn1;
 	private JTable tbl;
@@ -79,22 +81,25 @@ public class ConsultarYModificarLineasDeTransporte extends JPanel implements Tab
 			new MouseAdapter() 
 			{
 				public void mouseClicked(MouseEvent me) // Permite re-seleccionar el color haciendo click en la casilla del mismo
-				{
+				{	
 					if (me.getClickCount() > 1) // Si isCellEditable == true no funciona :(
-					{     
+					{
 						int i = ((JTable) me.getSource()).getSelectedRow();
 						int j = ((JTable) me.getSource()).getSelectedColumn();
 						
-						Color colorSeleccionado = JColorChooser.showDialog(null, "", Color.decode(lineasDeTransporte.get(i).getColor()));
-						
-						if (colorSeleccionado != null)
+						if (j == COLUMNA_COLOR) 
 						{
-							String colorHex = "#" + 
-									  Integer.toHexString(colorSeleccionado.getRed()) + 
-									  Integer.toHexString(colorSeleccionado.getGreen()) + 
-									  Integer.toHexString(colorSeleccionado.getBlue());
+							Color colorSeleccionado = JColorChooser.showDialog(null, "", Color.decode(lineasDeTransporte.get(i).getColor()));
 							
-							tbl.setValueAt(colorHex, i, j);
+							if (colorSeleccionado != null)
+							{
+								String colorHex = "#" + 
+										  Integer.toHexString(colorSeleccionado.getRed()) + 
+										  Integer.toHexString(colorSeleccionado.getGreen()) + 
+										  Integer.toHexString(colorSeleccionado.getBlue());
+								
+								tbl.setValueAt(colorHex, i, j);
+							}
 						}
 					}
 	         }
@@ -116,6 +121,8 @@ public class ConsultarYModificarLineasDeTransporte extends JPanel implements Tab
 		gbc.gridy = 0;
 		gbc.weightx = 1.0;
 		gbc.ipady = 0;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		gbc.fill = GridBagConstraints.BOTH;
 		this.add(sp, gbc);
 		
 		gbc.gridx = 0;
@@ -148,7 +155,7 @@ public class ConsultarYModificarLineasDeTransporte extends JPanel implements Tab
         			lineasDeTransporte.get(i).setNombre((String) datoModificado);
         		else
         		{
-        			JOptionPane.showMessageDialog(ventana, "El nombre no puede ser vacío.", "", JOptionPane.INFORMATION_MESSAGE);
+        			JOptionPane.showMessageDialog(ventana, "El nombre no puede ser vacío.", "", JOptionPane.ERROR_MESSAGE);
         			tbl.setValueAt(lineasDeTransporte.get(i).getNombre(), i, j);
         		}
         		break;

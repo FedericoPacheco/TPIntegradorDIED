@@ -72,7 +72,6 @@ public class MenuEstaciones extends JPanel
 			.addComponente(btnAgregar)
 			.addComponente(btnConsultarModificar)
 			.addComponente(btnEliminar)
-			.addComponente(btnEliminar)
 			.addComponente(btnInfoAdicional);
 	}
 }

@@ -53,24 +53,6 @@ public class TareaDeMantenimientoDB extends EntidadDB
 		
 		ps.close();
 	}
-	
-	public TareaDeMantenimiento getTareaDeMantenimiento(Integer idTarea) throws SQLException, ClassNotFoundException
-	{
-		TareaDeMantenimiento tarea = null;
-		
-		PreparedStatement ps = c.prepareStatement("SELECT * FROM tp_died.tarea_de_mantenimiento WHERE id = ?;");		
-		ResultSet rs; 
-		
-		ps.setInt(1, idTarea);
-		rs = ps.executeQuery();
-		if (rs.next())
-			tarea = recuperarTareaDeMantenimiento(rs);
-		
-		rs.close();
-		ps.close();
-		
-		return tarea;
-	}
 
 	public List<TareaDeMantenimiento> getAllTareasDeMantenimiento() throws SQLException, ClassNotFoundException 
 	{

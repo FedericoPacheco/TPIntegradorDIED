@@ -95,6 +95,8 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
 		gbc.gridy = 0;
 		gbc.weightx = 1.0;
 		gbc.ipady = 0;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		gbc.fill = GridBagConstraints.BOTH;
 		this.add(sp, gbc);
 		
 		btn1 = new JButton("Volver");
@@ -130,22 +132,44 @@ public class ConsultarYModificarEstaciones extends JPanel implements TableModelL
             			estaciones.get(i).setNombre((String) datoModificado);
             		else
             		{
-            			JOptionPane.showMessageDialog(ventana, "El nombre no puede ser vacío.", "", JOptionPane.INFORMATION_MESSAGE);
+            			JOptionPane.showMessageDialog(ventana, "El nombre no puede ser vacío.", "", JOptionPane.ERROR_MESSAGE);
             			tbl.setValueAt(estaciones.get(i).getNombre(), i, j);
             		}
             		break;
              	case 2: 
-             		try { estaciones.get(i).setHoraApertura(LocalTime.parse((String) datoModificado, formatoHora)); }
+             		try 
+             		{ 
+             			LocalTime horaApertura = LocalTime.parse((String) datoModificado, formatoHora);
+             			
+             			if (horaApertura.isBefore(estaciones.get(i).getHoraCierre()))
+             				estaciones.get(i).setHoraApertura(horaApertura);
+             			else
+             			{
+             				JOptionPane.showMessageDialog(ventana, "La hora de apertura debe ser menor a la de cierre.", "", JOptionPane.ERROR_MESSAGE);
+             				tbl.setValueAt(estaciones.get(i).getHoraApertura().toString(), i, j);
+             			}
+             		}
              		catch (DateTimeException e1) 
              		{
-                    	JOptionPane.showMessageDialog(ventana, "Hora de apertura incorrecta.", "", JOptionPane.INFORMATION_MESSAGE);
+                    	JOptionPane.showMessageDialog(ventana, "Hora de apertura inválida.", "", JOptionPane.ERROR_MESSAGE);
                     	tbl.setValueAt(estaciones.get(i).getHoraApertura().toString(), i, j);
                     }
              		break;
              	case 3: 
-             		try { estaciones.get(i).setHoraCierre(LocalTime.parse((String) datoModificado, formatoHora)); }
+             		try
+             		{ 
+             			LocalTime horaCierre = LocalTime.parse((String) datoModificado, formatoHora);
+             			
+             			if (estaciones.get(i).getHoraApertura().isBefore(horaCierre))
+             				estaciones.get(i).setHoraCierre(horaCierre); 
+             			else
+             			{
+             				JOptionPane.showMessageDialog(ventana, "La hora de apertura debe ser menor a la de cierre.", "", JOptionPane.ERROR_MESSAGE);
+             				tbl.setValueAt(estaciones.get(i).getHoraCierre().toString(), i, j);
+             			}
+             		}
              		catch (DateTimeException e1) {
-                    	JOptionPane.showMessageDialog(ventana, "Hora de cierre incorrecta.", "", JOptionPane.INFORMATION_MESSAGE);
+                    	JOptionPane.showMessageDialog(ventana, "Hora de cierre inválida.", "", JOptionPane.ERROR_MESSAGE);
                     	tbl.setValueAt(estaciones.get(i).getHoraCierre().toString(), i, j);
                     }
              		break;

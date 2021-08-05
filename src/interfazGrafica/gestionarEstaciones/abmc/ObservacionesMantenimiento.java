@@ -47,7 +47,6 @@ public class ObservacionesMantenimiento
 		panelObservaciones.add(btnAceptar, gbc);
 		btnAceptar.addActionListener(
 			e -> { 
-					// Registrar mantenimiento
 					TareaDeMantenimiento tareaDeMantenimiento = 
 						new TareaDeMantenimiento(LocalDate.now(), null, txta1.getText());					
 				
@@ -58,12 +57,11 @@ public class ObservacionesMantenimiento
 					}
 					
 					estacion.addIdMantenimiento(tareaDeMantenimiento.getId());
-					// -----------------------------------------------------------------------
+					
 					
 					ventanaObservaciones.dispose(); 	
 					ventanaPadre.setEnabled(true);
 					ventanaPadre.setVisible(true);
-					
 				 }
 		);
 		

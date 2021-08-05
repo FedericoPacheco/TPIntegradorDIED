@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,10 @@ import entidades.valueObjects.Tramo;
 
 public class RedDeTransporte             // i.e. un digrafo
 {
+	public static final Integer INFINITO_POSITIVO = Integer.MAX_VALUE;
+	public static final Integer INFINITO_NEGATIVO = Integer.MIN_VALUE;
+	
+	
 	private TreeSet<Estacion> estaciones;    // Nodos
 	private TreeSet<Tramo> tramos;		     // Aristas
 	private TreeSet<LineaDeTransporte> lineasDeTransporte;
@@ -150,7 +153,7 @@ public class RedDeTransporte             // i.e. un digrafo
 	}
 	
 	// Metodos necesarios para las consultas en la interfaz grafica. 
-	// *NO* agregar o quitar elementos a las listas directamente. Usar add...() o remove...(). 
+	// *NO* agregar o quitar elementos directamente. Usar add...() o remove...(). 
 	// Luego de hacer algun/os set...() sobre un objeto, usar update...()
 	public List<Estacion> getAllEstaciones() 							{ return new ArrayList<Estacion>(estaciones); 							}
 	public List<Tramo> getAllTramos() 		 						 	{ return new ArrayList<Tramo>(tramos); 									}
@@ -158,18 +161,6 @@ public class RedDeTransporte             // i.e. un digrafo
 	public List<LineaDeTransporte> getAllLineasDeTransporte() 			{ return new ArrayList<LineaDeTransporte>(lineasDeTransporte);	 		}
 	public List<Boleto> getAllBoletos() 								{ return new ArrayList<Boleto>(boletos);								}
 	
-	/*
-	public List<Tramo> getAllTramos(LineaDeTransporte linea)
-	{
-		List<Tramo> tramosLinea = new ArrayList<Tramo>();
-		
-		for (Tramo t : tramos)
-			if (t.getIdLineaDeTransporte().equals(linea.getId()))
-				tramosLinea.add(t);
-		
-		return tramosLinea;
-	}
-	*/
 	
 	public Tramo getTramo(Integer idTramo) 
 	{
@@ -296,7 +287,7 @@ public class RedDeTransporte             // i.e. un digrafo
 		// Inicializar las distancias a "infinito"
     	for (Estacion e : estaciones)
     	{
-    		auxDupla = new Dupla<Double, LinkedList<Tramo>>(Double.MAX_VALUE, new LinkedList<Tramo>());
+    		auxDupla = new Dupla<Double, LinkedList<Tramo>>((double) INFINITO_POSITIVO, new LinkedList<Tramo>());
     		costoYCaminoHastaCadaEstacion.put(e, auxDupla);
     	}
     	auxDupla = new Dupla<Double, LinkedList<Tramo>>(0.0, new LinkedList<Tramo>());
@@ -411,32 +402,32 @@ public class RedDeTransporte             // i.e. un digrafo
 
 	@SuppressWarnings("unchecked")
 	private void flujoMaximoAux(Estacion origen, Estacion destino, LinkedList<Tramo> caminoHastaOrigen, 
-			HashSet<Estacion> estacionesVisitadas, Map<Tramo, Integer> flujoRestanteTramos, 
-			List<Dupla<LinkedList<Tramo>, Integer>> resultado) 
+								HashSet<Estacion> estacionesVisitadas, Map<Tramo, Integer> flujoRestanteTramos, 
+								List<Dupla<LinkedList<Tramo>, Integer>> resultado) 
 	{
 		if (origen.equals(destino))
 		{
-			if (caminoHastaOrigen.isEmpty()) // Se eligio el origen "original" y destino iguales
-			{
-				resultado.add(new Dupla<LinkedList<Tramo>, Integer>(new LinkedList<>(), Integer.MAX_VALUE));
-			}
+			if (caminoHastaOrigen.isEmpty()) // Se eligio el origen "original" y destino iguales			
+				resultado.add(new Dupla<LinkedList<Tramo>, Integer>(new LinkedList<>(), INFINITO_POSITIVO));
 			else
 			{
 				Integer flujoMaximo = 
+					flujoRestanteTramos.get(
 						Collections.min(
 							caminoHastaOrigen, 
-							(t1, t2) -> t1.getCantidadMaximaPasajeros().compareTo(t2.getCantidadMaximaPasajeros())
-						).getCantidadMaximaPasajeros();
+							(t1, t2) -> flujoRestanteTramos.get(t1).compareTo(flujoRestanteTramos.get(t2))
+						)
+					);
+				
+				if (flujoMaximo > 0)
+				{
+					// Restar el "flujo" que ocupa este camino
+					for (Tramo t : caminoHastaOrigen)
+						flujoRestanteTramos.put(t, flujoRestanteTramos.get(t) - flujoMaximo);
 					
-					if (flujoMaximo > 0)
-					{
-						// Restar el "flujo" que ocupa este camino
-						for (Tramo t : caminoHastaOrigen)
-							flujoRestanteTramos.put(t, flujoRestanteTramos.get(t) - flujoMaximo);
-						
-						// Guardar en el resultado
-						resultado.add(new Dupla<LinkedList<Tramo>, Integer>(caminoHastaOrigen, flujoMaximo));
-					}
+					// Guardar en el resultado
+					resultado.add(new Dupla<LinkedList<Tramo>, Integer>(caminoHastaOrigen, flujoMaximo));
+				}
 			}			
 		}
 		else
@@ -464,25 +455,24 @@ public class RedDeTransporte             // i.e. un digrafo
 			}
 		}
 	}
-	
+
 	// -----------------------------------------------------------------------------------------------------------------------------------------------------
 	// Page rank: 
 	
 	public Map<Estacion, Double> estacionRank(Double factorDeAmortiguacion, Double error) // i.e. pageRank
 	{
-		Map<Estacion, Double> estacionRank = new LinkedHashMap<Estacion, Double>();
-		Map<Estacion, Double> estacionRankAnterior = new LinkedHashMap<Estacion, Double>();
+		Map<Estacion, Double> estacionRank = new HashMap<Estacion, Double>();
+		Map<Estacion, Double> estacionRankAnterior = new HashMap<Estacion, Double>();
 		Map<Estacion, Integer> cantidadEnlacesSalientesEstacion = new HashMap<Estacion, Integer>();
 		Double unEstacionRank;
 		
 		for (Estacion e : estaciones)
 		{
 			estacionRank.put(e, 1.0);
-			estacionRankAnterior.put(e, 0.0);
 			cantidadEnlacesSalientesEstacion.put(e, this.getCantidadDeEnlacesSalientes(e));
 		}
 		
-		while(hayErrorEnEstacionRank(estacionRank, estacionRankAnterior, error))
+		do
 		{
 			for (Estacion e : estaciones)
 			{
@@ -498,9 +488,9 @@ public class RedDeTransporte             // i.e. un digrafo
 				estacionRank.put(e, unEstacionRank);
 			}
 		}
+		while(hayError(estacionRank, estacionRankAnterior, error));
 		
 		return estacionRank;
-		// Despues ver: https://www.geeksforgeeks.org/iterate-map-java/
 	}
 	
 	private Set<Estacion> getEstacionesIncidentes(Estacion estacion)
@@ -527,8 +517,8 @@ public class RedDeTransporte             // i.e. un digrafo
 			return suma;
 	}
 
-	private Boolean hayErrorEnEstacionRank(Map<Estacion, Double> estacionRank, // No se que tan necesario es hacerlo asi
-			Map<Estacion, Double> estacionRankAnterior, Double error) 
+	private Boolean hayError(Map<Estacion, Double> estacionRank, 						// No se que tan necesario es hacerlo asi
+							 Map<Estacion, Double> estacionRankAnterior, Double error) 
 	{
 		Boolean noHayError = true;
 		Iterator<Estacion> i = estaciones.iterator();

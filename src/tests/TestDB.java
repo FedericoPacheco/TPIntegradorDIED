@@ -201,7 +201,8 @@ public class TestDB
 		bol1.setNombreCliente("Federico Ignacio Pacheco Pilan");
 		bolDB.updateBoleto(bol1);
 		
-		System.out.println(bolDB.getBoleto(bol1.getId()));
+		for (Boleto b : bolDB.getAllBoletos())
+			System.out.println(b);
 		System.out.println();
 		
 		bolDB.deleteBoleto(bol1.getId());

@@ -60,24 +60,6 @@ public class BoletoDB extends EntidadDB
 		ps.close();
 	}	
 	
-	public Boleto getBoleto(Integer idBoleto) throws SQLException
-	{
-		Boleto boleto = null;
-		
-		PreparedStatement ps = c.prepareStatement("SELECT * FROM tp_died.boleto WHERE id = ?;");		
-		ResultSet rs; 
-		
-		ps.setInt(1, idBoleto);
-		rs = ps.executeQuery();
-		if (rs.next())
-			boleto = recuperarBoleto(rs);
-		
-		rs.close();
-		ps.close();
-		
-		return boleto;
-	}
-	
 	public List<Boleto> getAllBoletos() throws SQLException
 	{
 		List<Boleto> boletos = new ArrayList<Boleto>();

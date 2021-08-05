@@ -68,26 +68,6 @@ public class EstacionDB extends EntidadDB
 		ps2.close();
 		ps3.close();
 	}
-	
-	public Estacion getEstacion(Integer idEstacion) throws SQLException, ClassNotFoundException
-	{
-		Estacion estacion = null;
-		
-		TareaDeMantenimientoDB tareaDB = new TareaDeMantenimientoDB();
-		PreparedStatement ps = c.prepareStatement("SELECT * FROM tp_died.estacion WHERE id = ?;");		
-		ResultSet rs; 
-		
-		ps.setInt(1, idEstacion);
-		rs = ps.executeQuery();
-		if (rs.next())
-			estacion = recuperarEstacion(rs, tareaDB);
-		
-		tareaDB.close();
-		rs.close();
-		ps.close();
-		
-		return estacion;
-	}
 
 	public List<Estacion> getAllEstaciones() throws SQLException, ClassNotFoundException 
 	{

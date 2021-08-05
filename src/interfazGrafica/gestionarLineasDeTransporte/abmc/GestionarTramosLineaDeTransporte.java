@@ -1,5 +1,6 @@
 package interfazGrafica.gestionarLineasDeTransporte.abmc;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -7,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 	private JTable tbl;
 	private JScrollPane sp;
 	private JComboBox<String> cbLinea, cbOrigen, cbDestino;
-	private JButton btnAgregar, btnEliminar, btnAceptar, btnCompletarDatos;
+	private JButton btnAgregar, btnEliminar, btnVolver, btnCompletarDatos;
 	private JLabel lbl1, lbl2, lbl3;
 	private GridBagConstraints gbc;
 	private JFrame ventana;
@@ -51,10 +51,10 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 	
 	// Valores por defecto para los campos del tramo (Se hizo que en la db no pueda haber nulos)
 	// (DFLT: default)
-	private static final Double DISTANCIA_DFLT = (double) (Integer.MAX_VALUE - 1);
-	private static final Integer DURACION_DFLT = Integer.MAX_VALUE - 1;
+	private static final Double DISTANCIA_DFLT = (double) (RedDeTransporte.INFINITO_POSITIVO); //- 1);
+	private static final Integer DURACION_DFLT = RedDeTransporte.INFINITO_POSITIVO; //- 1;
 	private static final Integer PASAJEROS_DFLT = 0;
-	private static final Double COSTO_DFLT = (double) (Integer.MAX_VALUE - 1);
+	private static final Double COSTO_DFLT = (double) (RedDeTransporte.INFINITO_POSITIVO); //- 1);
 	
 	public GestionarTramosLineaDeTransporte(JFrame ventana, JPanel padre, RedDeTransporte redDeTransporte) 
 	{	
@@ -95,7 +95,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		
 		btnAgregar = new JButton("Agregar");
 		btnEliminar = new JButton("Eliminar");
-		btnAceptar = new JButton("Volver");
+		btnVolver = new JButton("Volver");
 		btnCompletarDatos = new JButton("Completar datos");
 		
 		lbl1 = new JLabel("Seleccione una línea de transporte: ");
@@ -104,7 +104,9 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		
 		mt = new ModeloTablaGenerico();
 		mt.addColumna("Estación origen").addColumna("Estación destino");
+		mt.setDatos(this.recuperarDatosEstacionesTramos());
 		tbl = new JTable(mt);
+		tbl.setPreferredScrollableViewportSize(new Dimension(500, 300));
 		// https://stackoverflow.com/a/7433758
 		DefaultTableCellRenderer centrarDatos = new DefaultTableCellRenderer();
 		centrarDatos.setHorizontalAlignment(JLabel.CENTER);
@@ -120,11 +122,8 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 						btnCompletarDatos.setEnabled(true);
 					}
 				 }
-		);
-		
+		);		
 		sp = new JScrollPane(tbl);
-		mt.setDatos(this.recuperarDatosEstacionesTramos());
-		
 	
 		gbc.gridx = 0;
 		gbc.gridy = 0;
@@ -224,7 +223,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 						DISTANCIA_DFLT,
 						DURACION_DFLT,
 						PASAJEROS_DFLT,
-						Tramo.Estado.INACTIVO,
+						Tramo.Estado.ACTIVO,
 						COSTO_DFLT,
 						estacionesCb.get(cbOrigen.getSelectedItem()).getId(),
 						estacionesCb.get(cbDestino.getSelectedItem()).getId(),
@@ -237,6 +236,7 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
+					lineasCb.get(cbLinea.getSelectedItem()).addIdTramo(auxTramo.getId());
 					
 					mt.setDatos(this.recuperarDatosEstacionesTramos());
 					mt.fireTableDataChanged();
@@ -261,16 +261,18 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		btnEliminar.addActionListener(
 			e -> {
 					ArrayList<Integer> filasSeleccionadas = arrayAArrayList(tbl.getSelectedRows());
-					LinkedList<Tramo> nuevosTramos = new LinkedList<Tramo>();
+					ArrayList<Tramo> nuevosTramos = new ArrayList<Tramo>();
 					
 					for (Integer i = 0; i < tramosLinea.size(); i++)
 					{
 						if (!filasSeleccionadas.contains(i))
-							nuevosTramos.add(tramosLinea.get((int) i));
+							nuevosTramos.add(tramosLinea.get(i.intValue()));
 						else
 						{
+							lineasCb.get(cbLinea.getSelectedItem()).removeIdTramo(tramosLinea.get(i.intValue()).getId());
+							
 							try {
-								redDeTransporte.deleteTramo(tramosLinea.get((int) i));
+								redDeTransporte.deleteTramo(tramosLinea.get(i.intValue()));
 							} catch (ClassNotFoundException | SQLException e1) {
 								e1.printStackTrace();
 							}
@@ -298,11 +300,9 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		this.add(btnCompletarDatos, gbc);
 		btnCompletarDatos.addActionListener(
 			e -> {
-					int[] filasSeleccionadas = tbl.getSelectedRows();
-					
-					for (int i = 0; i < filasSeleccionadas.length; i++)
-						new AgregarDatosTramo(tramosLinea.get(i));	
-				}
+					for(Integer i : arrayAArrayList(tbl.getSelectedRows()))
+						new AgregarDatosTramo(tramosLinea.get(i.intValue()));
+				 }
 		);
 		
 		gbc.gridx = 0;
@@ -321,16 +321,14 @@ public class GestionarTramosLineaDeTransporte extends JPanel
 		gbc.fill = GridBagConstraints.CENTER;
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.ipady = 15;
-		this.add(btnAceptar, gbc);
-		btnAceptar.addActionListener(
+		this.add(btnVolver, gbc);
+		btnVolver.addActionListener(
 			e -> {
 					ventana.setContentPane(padre);
 					ventana.pack();
 					ventana.setVisible(true);
 				 }
 		);
-
-		
 	}
 	
 	private ArrayList<Integer> arrayAArrayList(int[] arr) 

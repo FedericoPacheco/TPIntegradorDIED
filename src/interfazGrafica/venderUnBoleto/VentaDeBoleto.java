@@ -1,4 +1,4 @@
-package interfazGrafica.ventaDeBoleto;
+package interfazGrafica.venderUnBoleto;
 
 import java.awt.event.ActionListener;
 import java.sql.SQLException;

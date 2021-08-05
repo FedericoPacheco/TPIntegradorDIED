@@ -44,7 +44,7 @@ public class AgregarLineaDeTransporte extends JPanel
 			
 		JTextField txtfNombre = new JTextField(25);
 		
-		//https://stackoverflow.com/a/26565256
+		// https://stackoverflow.com/a/26565256
 		JButton btnSeleccionColor = new JButton("Seleccionar");
 		btnSeleccionColor.addActionListener(
 			e -> {
@@ -66,7 +66,6 @@ public class AgregarLineaDeTransporte extends JPanel
 		
 		agregarLinea
 			.addComponente(txtfNombre)
-			//.addComponente(txtfColor)
 			.addComponente(btnSeleccionColor)
 			.addComponente(cbEstado);
 		

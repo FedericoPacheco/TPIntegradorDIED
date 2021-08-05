@@ -1,4 +1,4 @@
-package interfazGrafica.ventaDeBoleto;
+package interfazGrafica.venderUnBoleto;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -33,8 +33,8 @@ import grafo.RedDeTransporte;
 @SuppressWarnings("serial")
 public class DibujoRedDeTransporte extends JPanel
 {
-	private static final int ANCHO_VENTANA = 1280;
-	private static final int ALTO_VENTANA = 720;
+	private static final int ANCHO_VENTANA = 1024;
+	private static final int ALTO_VENTANA = 768;
 	
 	// No se me ocurrio un nombre mejor
 	private static final int IPADX_FONDO = 20; 
@@ -54,10 +54,19 @@ public class DibujoRedDeTransporte extends JPanel
 	private static final Color COLOR_ESTACION_ACTIVA_FUERA_DEL_CAMINO = new Color(43, 120, 31);
 	private static final Color COLOR_ESTACION_INACTIVA_FUERA_DEL_CAMINO = new Color(138, 28, 28);
 	private static final Color COLOR_ESTACION_EN_CAMINO = new Color(107, 224, 81);
-	private static final Color COLOR_BORDE_ESTACION = Color.BLACK;
+	private static final Color COLOR_BORDE_ESTACION_GENERAL = Color.BLACK;
+	private static final Color COLOR_BORDE_ESTACION_INICIO_O_FIN_CAMINO = new Color(255, 226, 61);
 	private static final Color COLOR_TEXTO = Color.BLACK;
 	private static final Color COLOR_TRAMO_FUERA_DEL_CAMINO = Color.GRAY;
 	private static final Color COLOR_FONDO = Color.WHITE;
+	
+	private static final BasicStroke LINEA_CONTINUA_FINA = new BasicStroke(1.0f);
+	private static final BasicStroke LINEA_CONTINUA_GRUESA = new BasicStroke(4.0f);
+	/*
+	private static final float aux[] = {10.0f};
+    private static final BasicStroke LINEA_PUNTEADA_GRUESA = 
+        new BasicStroke(4.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, aux, 0.0f);
+	*/
 	
 	private static final int ANCHO_BTN = 100;
 	private static final int ALTO_BTN = 30;
@@ -102,7 +111,7 @@ public class DibujoRedDeTransporte extends JPanel
 	
 	private void dibujarFondoYBotones(Graphics2D g2d)
 	{
-		// El fondo y los botones de aceptar fueron ajustados a ojo
+		// El fondo y los botones de aceptar fueron ajustados "a ojo"
 		// con numeros magicos por probablemente el siguiente motivo:
 		// https://stackoverflow.com/a/6593372
 		
@@ -176,16 +185,11 @@ public class DibujoRedDeTransporte extends JPanel
 		
 		Point2D.Double puntoOrigen, puntoDestino;
 		double auxXOrigen, auxYOrigen, auxXDestino, auxYDestino;
-		
-		BasicStroke lineaEstandar = new BasicStroke(2.0f);
-		float aux[] = {10.0f};
-	    BasicStroke lineaPunteada = // Sacado de un tutorial, no se que hace cada cosa xD
-	        new BasicStroke(4.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, aux, 0.0f);
-		
+		int dFlecha, hFlecha;
 	    Random aleatorizador = new Random();
-		
 	    
-		auxXOrigen = auxYOrigen = auxXDestino = auxYDestino = 0.0; // Pedido por el compilador
+	    dFlecha = hFlecha = 1;
+		auxXOrigen = auxYOrigen = auxXDestino = auxYDestino = 0.0; 
 		for (Tramo t : redDeTransporte.getAllTramos())
 		{
 			puntoOrigen = ubicacionesEstaciones.get(t.getIdOrigen());
@@ -243,15 +247,19 @@ public class DibujoRedDeTransporte extends JPanel
 				
 			if (camino.contains(t))
 			{
-				g2d.setStroke(lineaPunteada);
+				g2d.setStroke(LINEA_CONTINUA_GRUESA);//LINEA_PUNTEADA_GRUESA);
 				auxColor = Color.decode(
 					redDeTransporte.getLineaDeTransporte(t.getIdLineaDeTransporte()).getColor()
 				);
+				dFlecha = 15;
+				hFlecha = 10;
 			}
 			else
 			{
-				g2d.setStroke(lineaEstandar);
+				g2d.setStroke(LINEA_CONTINUA_FINA);
 				auxColor = COLOR_TRAMO_FUERA_DEL_CAMINO;
+				dFlecha = 10;
+				hFlecha = 5;
 			}
 			g2d.setColor(auxColor);
 			
@@ -262,10 +270,12 @@ public class DibujoRedDeTransporte extends JPanel
 				(int) (puntoOrigen.y + auxYOrigen),
 				(int) (puntoDestino.x + auxXDestino),
 				(int) (puntoDestino.y + auxYDestino),
-				10,
-				5
+				dFlecha,
+				hFlecha
 			);
 		}
+		
+		g2d.setStroke(LINEA_CONTINUA_FINA); // Evitar que quede linea punteada en algunos casos
 	}
 
 	private void dibujarEstaciones(Graphics2D g2d, Map<Integer, Point2D.Double> ubicacionesEstaciones)
@@ -276,6 +286,7 @@ public class DibujoRedDeTransporte extends JPanel
 		for (Estacion e : redDeTransporte.getAllEstaciones())
 		{
 			auxPunto = ubicacionesEstaciones.get(e.getId());
+			auxRectangulo = new RoundRectangle2D.Double(auxPunto.x, auxPunto.y, W, H, ARCH_W, ARCH_H);
 			
 			
 			if (estacionEstaEnCamino(e.getId()))
@@ -287,9 +298,20 @@ public class DibujoRedDeTransporte extends JPanel
 				else
 					g2d.setColor(COLOR_ESTACION_INACTIVA_FUERA_DEL_CAMINO);
 			}	
-			auxRectangulo = new RoundRectangle2D.Double(auxPunto.x, auxPunto.y, W, H, ARCH_W, ARCH_H);
 			g2d.fill(auxRectangulo);
-			g2d.setColor(COLOR_BORDE_ESTACION);
+			
+			
+			if (e.getId().equals(camino.get(0).getIdOrigen()) || 
+				e.getId().equals(camino.get(camino.size() - 1).getIdDestino()))
+				{
+					g2d.setColor(COLOR_BORDE_ESTACION_INICIO_O_FIN_CAMINO);
+					g2d.setStroke(LINEA_CONTINUA_GRUESA);
+				}
+			else
+			{
+				g2d.setColor(COLOR_BORDE_ESTACION_GENERAL);
+				g2d.setStroke(LINEA_CONTINUA_FINA);
+			}
 			g2d.draw(auxRectangulo);
 			
 			

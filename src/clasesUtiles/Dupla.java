@@ -17,7 +17,6 @@ public class Dupla<T1, T2>
 		segundo = null;
 	}
 
-	
 	@Override
 	public String toString() {
 		return "[" + primero.toString() + "; " + segundo.toString() + "]";

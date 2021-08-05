@@ -5,7 +5,7 @@
 -- Dumped from database version 13.3
 -- Dumped by pg_dump version 13.3
 
--- Started on 2021-07-31 19:57:46
+-- Started on 2021-08-05 19:00:42
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -219,6 +219,28 @@ ALTER TABLE tp_died.tramo_seq OWNER TO postgres;
 --
 
 COPY tp_died.boleto (id, correo_electronico_cliente, nombre_cliente, fecha_venta, nombre_estacion_origen, nombre_estacion_destino, camino, costo) FROM stdin;
+0	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónG	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónG): LíneaD"}	5
+1	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónG	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónG): LíneaD"}	5
+2	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónG	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónG): LíneaD"}	5
+3	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónE	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónE): LíneaE"}	3
+4	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+5	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+6	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+7	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+8	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+9	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+10	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+11	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+12	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+13	fedepacheco2112@gmail.com	Federico Pacheco	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+14	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+15	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+16	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+17	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+18	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónC	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónC): LíneaE"}	3
+19	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónD	{"(EstaciónA, EstaciónD): LíneaC"}	1
+20	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónF	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónG): LíneaD","(EstaciónG, EstaciónF): LíneaB"}	6
+21	fedepacheco2112@gmail.com	Federico	2021-08-05	EstaciónA	EstaciónF	{"(EstaciónA, EstaciónD): LíneaC","(EstaciónD, EstaciónG): LíneaD","(EstaciónG, EstaciónF): LíneaB"}	6
 \.
 
 
@@ -229,6 +251,14 @@ COPY tp_died.boleto (id, correo_electronico_cliente, nombre_cliente, fecha_venta
 --
 
 COPY tp_died.estacion (nombre, id, hora_apertura, hora_cierre, estado) FROM stdin;
+EstaciónB	1	06:00:00	23:30:00	OPERATIVA
+EstaciónH	8	05:30:00	23:30:00	OPERATIVA
+EstaciónA	0	06:00:00	23:00:00	OPERATIVA
+EstaciónE	4	06:00:00	23:00:00	OPERATIVA
+EstaciónF	5	06:00:00	23:00:00	OPERATIVA
+EstaciónG	6	06:00:00	23:00:00	OPERATIVA
+EstaciónC	2	06:00:00	23:00:00	OPERATIVA
+EstaciónD	3	06:00:00	23:00:00	OPERATIVA
 \.
 
 
@@ -239,6 +269,11 @@ COPY tp_died.estacion (nombre, id, hora_apertura, hora_cierre, estado) FROM stdi
 --
 
 COPY tp_died.linea_de_transporte (id, nombre, color, estado) FROM stdin;
+2	LíneaC	#0ff0	ACTIVA
+3	LíneaD	#0ffff	ACTIVA
+4	LíneaE	#ff9f6d	ACTIVA
+1	LíneaB	#ff3333	ACTIVA
+0	LíneaA	#ff033	ACTIVA
 \.
 
 
@@ -249,6 +284,10 @@ COPY tp_died.linea_de_transporte (id, nombre, color, estado) FROM stdin;
 --
 
 COPY tp_died.tarea_de_mantenimiento (id, fecha_inicio, fecha_fin, observaciones, id_estacion) FROM stdin;
+2	2021-08-04	2021-08-04	.\n.\n.\n.\n.\n.\n.\nObservaciones	1
+3	2021-08-05	2021-08-05	Observaciones EstaciónH	8
+0	2021-08-04	2021-08-04	Observaciones mantenimiento estación C	2
+1	2021-08-04	2021-08-04		3
 \.
 
 
@@ -259,6 +298,18 @@ COPY tp_died.tarea_de_mantenimiento (id, fecha_inicio, fecha_fin, observaciones,
 --
 
 COPY tp_died.tramo (id, distancia_en_km, duracion_viaje_en_min, cantidad_maxima_pasajeros, estado, costo, id_estacion_origen, id_estacion_destino, id_linea_de_transporte) FROM stdin;
+19	2	2	2	ACTIVO	2	0	1	0
+21	6	6	6	ACTIVO	6	2	6	1
+22	1	1	1	ACTIVO	1	6	5	1
+23	1	1	1	ACTIVO	1	0	3	2
+24	8	8	8	ACTIVO	8	3	5	2
+25	3	3	3	ACTIVO	3	1	3	3
+26	4	4	4	ACTIVO	4	3	6	3
+27	2	2	2	ACTIVO	2	3	4	4
+28	5	5	5	ACTIVO	5	4	5	4
+29	2	2	2	ACTIVO	2	3	2	4
+18	0	0	0	ACTIVO	0	4	0	0
+20	10	10	10	ACTIVO	10	1	2	0
 \.
 
 
@@ -268,7 +319,7 @@ COPY tp_died.tramo (id, distancia_en_km, duracion_viaje_en_min, cantidad_maxima_
 -- Name: boleto_seq; Type: SEQUENCE SET; Schema: tp_died; Owner: postgres
 --
 
-SELECT pg_catalog.setval('tp_died.boleto_seq', 0, false);
+SELECT pg_catalog.setval('tp_died.boleto_seq', 21, true);
 
 
 --
@@ -277,7 +328,7 @@ SELECT pg_catalog.setval('tp_died.boleto_seq', 0, false);
 -- Name: estacion_seq; Type: SEQUENCE SET; Schema: tp_died; Owner: postgres
 --
 
-SELECT pg_catalog.setval('tp_died.estacion_seq', 0, false);
+SELECT pg_catalog.setval('tp_died.estacion_seq', 8, true);
 
 
 --
@@ -286,7 +337,7 @@ SELECT pg_catalog.setval('tp_died.estacion_seq', 0, false);
 -- Name: linea_de_transporte_seq; Type: SEQUENCE SET; Schema: tp_died; Owner: postgres
 --
 
-SELECT pg_catalog.setval('tp_died.linea_de_transporte_seq', 0, false);
+SELECT pg_catalog.setval('tp_died.linea_de_transporte_seq', 5, true);
 
 
 --
@@ -295,7 +346,7 @@ SELECT pg_catalog.setval('tp_died.linea_de_transporte_seq', 0, false);
 -- Name: tarea_de_mantenimiento_seq; Type: SEQUENCE SET; Schema: tp_died; Owner: postgres
 --
 
-SELECT pg_catalog.setval('tp_died.tarea_de_mantenimiento_seq', 0, false);
+SELECT pg_catalog.setval('tp_died.tarea_de_mantenimiento_seq', 3, true);
 
 
 --
@@ -304,7 +355,7 @@ SELECT pg_catalog.setval('tp_died.tarea_de_mantenimiento_seq', 0, false);
 -- Name: tramo_seq; Type: SEQUENCE SET; Schema: tp_died; Owner: postgres
 --
 
-SELECT pg_catalog.setval('tp_died.tramo_seq', 0, false);
+SELECT pg_catalog.setval('tp_died.tramo_seq', 29, true);
 
 
 --
@@ -388,7 +439,7 @@ ALTER TABLE ONLY tp_died.tramo
     ADD CONSTRAINT id_linea_de_transporte_fk FOREIGN KEY (id_linea_de_transporte) REFERENCES tp_died.linea_de_transporte(id) NOT VALID;
 
 
--- Completed on 2021-07-31 19:57:46
+-- Completed on 2021-08-05 19:00:42
 
 --
 -- PostgreSQL database dump complete

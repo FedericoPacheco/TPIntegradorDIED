@@ -59,26 +59,6 @@ public class LineaDeTransporteDB extends EntidadDB
 		ps2.close();
 	}
 	
-	public LineaDeTransporte getLineaDeTransporte(Integer idLineaDeTransporte) throws SQLException, ClassNotFoundException
-	{
-		LineaDeTransporte linea = null;
-		
-		TramoDB tramoDB = new TramoDB();
-		PreparedStatement ps = c.prepareStatement("SELECT * FROM tp_died.linea_de_transporte WHERE id = ?;");		
-		ResultSet rs; 
-		
-		ps.setInt(1, idLineaDeTransporte);
-		rs = ps.executeQuery();
-		if (rs.next())
-			linea = recuperarLineaDeTransporte(rs, tramoDB);
-		
-		tramoDB.close();
-		rs.close();
-		ps.close();
-		
-		return linea;
-	}
-
 	public List<LineaDeTransporte> getAllLineasDeTransporte() throws SQLException, ClassNotFoundException 
 	{
 		List<LineaDeTransporte> lineas = new ArrayList<LineaDeTransporte>();

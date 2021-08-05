@@ -72,26 +72,38 @@ public class AgregarEstacion extends JPanel
 						
 						try
 						{
-							Estacion estacion = new Estacion(
-								txtfNombre.getText(),
-								LocalTime.parse(txtfHoraApertura.getText(), formatoHora),
-								LocalTime.parse(txtfHoraCierre.getText(), formatoHora),
-								estado
-							);
+							LocalTime horaApertura = LocalTime.parse(txtfHoraApertura.getText(), formatoHora);
+							LocalTime horaCierre = LocalTime.parse(txtfHoraCierre.getText(), formatoHora);
 							
-							redDeTransporte.addEstacion(estacion);
-							
-							if (estado == Estacion.Estado.EN_MANTENIMIENTO)
-								new ObservacionesMantenimiento(ventana, estacion, redDeTransporte);
-							
-							txtfNombre.setText("");
-							txtfHoraApertura.setText("");
-							txtfHoraCierre.setText("");
-							cbEstado.setSelectedItem("Operativa");
+							if (horaApertura.isBefore(horaCierre))
+							{
+								Estacion estacion = new Estacion(
+									txtfNombre.getText(),
+									horaApertura,
+									horaCierre,
+									estado
+								);
+								
+								redDeTransporte.addEstacion(estacion);
+								
+								if (estado == Estacion.Estado.EN_MANTENIMIENTO)
+									new ObservacionesMantenimiento(ventana, estacion, redDeTransporte);
+								
+								txtfNombre.setText("");
+								txtfHoraApertura.setText("");
+								txtfHoraCierre.setText("");
+								cbEstado.setSelectedItem("Operativa");
+							}
+							else
+							{
+								JOptionPane.showMessageDialog(ventana, "La hora de apertura debe ser menor a la de cierre.", "", JOptionPane.ERROR_MESSAGE);
+								txtfHoraApertura.setText("");
+								txtfHoraCierre.setText("");
+							}
 						}
 						catch(DateTimeException e1) 
 						{
-							JOptionPane.showMessageDialog(ventana, "Hora de apertura o cierre incorrectos.", "", JOptionPane.INFORMATION_MESSAGE);
+							JOptionPane.showMessageDialog(ventana, "Hora de apertura o cierre inválidos.", "", JOptionPane.ERROR_MESSAGE);
 							txtfHoraApertura.setText("");
 							txtfHoraCierre.setText("");
 						}

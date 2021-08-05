@@ -55,24 +55,6 @@ public class TramoDB extends EntidadDB
 		ps.close();
 	}	
 	
-	public Tramo getTramo(Integer idTramo) throws SQLException
-	{
-		Tramo tramo = null;
-		
-		PreparedStatement ps = c.prepareStatement("SELECT * FROM tp_died.tramo WHERE id = ?;");		
-		ResultSet rs; 
-		
-		ps.setInt(1, idTramo);
-		rs = ps.executeQuery();
-		if (rs.next())
-			tramo = recuperarTramo(rs);
-		
-		rs.close();
-		ps.close();
-		
-		return tramo;
-	}
-	
 	public List<Tramo> getAllTramos() throws SQLException
 	{
 		List<Tramo> tramos = new ArrayList<Tramo>();
