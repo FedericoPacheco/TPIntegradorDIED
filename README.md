@@ -1,4 +1,4 @@
-# TP integrador DIED - ISI - UTN FRSF - 2021
+# TP integrador - DIED - ISI - UTN FRSF - 2021
 
 ### Integrantes: 
  * Fornasiero, Agustín (*)
